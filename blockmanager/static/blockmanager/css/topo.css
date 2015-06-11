@@ -1,0 +1,240 @@
+body{
+	font-size: 12px;
+	font-family: Arial,"宋体",Helvetica,sans-serif;
+	color:black;
+}
+
+*{
+	margin:0;
+	padding:0;
+	list-style: none;
+}
+
+a{
+	text-decoration:none;
+	color:black;
+}
+
+input[type="text"],textarea,select{
+	padding-left:10px;
+}
+
+.header{
+	margin:0;
+	height:42px;
+	line-height:42px;
+	border-bottom:2px solid #bbb;
+	background-color:#f3f3f3;
+}
+.h-title{
+	font-size:16px;
+	color:#d03229;
+	font-weight:bold;
+	padding-left:20px;
+}
+.topo-left{
+	float:left;
+	width:17%;
+	overflow:auto;
+	background:url("../img/left-bg.png") right repeat-y;
+}
+
+.icon-title{
+	margin:0 3px 0 0;
+	height:26px;
+	line-height:26px;
+	font-size:14px;
+	text-indent:5px;
+	border-bottom:1px solid #bbb;
+	background:url("../img/topo_title_bg.gif") repeat-x;
+	cursor:pointer;
+}
+
+.lct-icon{
+	display:none;
+}
+
+.lct-icon ul li{
+	padding:10px;
+	margin-top:5px;
+	margin-bottom:5px;
+	height:15px;
+	line-height:15px;
+	font-size:13px;
+}
+
+.lct-icon ul li.active{
+	margin-left:3px;
+	border:2px solid #ddd;
+	border-left:3px solid #d03229;
+	border-right:0;
+	background:white;
+}
+
+.lct-icon ul li a{
+	display:block;
+}
+
+.topo-right{
+	margin-left:17%;
+}
+
+.right-title{
+	margin:0;
+	height:26px;
+	line-height:26px;
+	font-size:12px;
+	text-indent:5px;
+	border-bottom:1px solid #ddd;
+	background:url("../img/right_title_bg.gif") repeat-x;
+}
+
+.topo-btn{
+	padding:3px 0px 2px 14px;
+	border: 0px none;
+	cursor: pointer;
+	margin: 0 0 0 8px;
+	overflow: visible;
+}
+
+.new-btn{
+	background:url("../img/btn/new.png") 0px 6px no-repeat;
+}
+
+.prop-btn{
+	background:url("../img/btn/prop.png") 0px 7px no-repeat;
+}
+
+.copy-btn{
+	background:url("../img/btn/copy.png") 0px 6px no-repeat;
+}
+
+.save-btn{
+	background:url("../img/btn/save.png") 0px 6px no-repeat;
+}
+
+.stock-btn{
+	background:url("../img/btn/stock.png") 0px 6px no-repeat;
+}
+
+.cancel-btn{
+	background:url("../img/btn/cancel.png") 0px 6px no-repeat;
+}
+
+.del-btn{
+	background:url("../img/btn/del.png") 0px 6px no-repeat;
+}
+
+.right-content{
+	padding:15px;
+}
+
+.search-area{
+	margin:5px 0 5px 0;
+	padding:0;
+	padding-left:30px;
+	min-height:40px;
+	overflow:hidden;
+	background:#e4e4e4;
+}
+
+.search-area > div{
+	height:40px;
+	line-height:40px;
+}
+
+.search-area > div > span{
+	margin-right:20px;	
+}
+
+.search-area > div > span input{
+	width:149px;
+	height:20px;
+	line-height:20px;
+	text-indent:1em;
+	border:1px solid #c4c4c4;
+}
+
+.search-area > div > span select{
+	width:160px;
+	height:22px;
+	line-height:22px;
+	border:1px solid #c4c4c4;
+}
+
+.search-area > div > span .search_button{
+	width:59px;
+	height:24px;
+	background:url("../img/search.gif") no-repeat;
+	border:0;
+	color:#6e6e6e;
+}
+
+.list-table{
+	width:100%;
+	border-collapse:collapse;
+}
+
+.list-table tr th{
+	height:29px;
+	line-height:29px;
+	text-align:center;
+	border:1px solid #ddd;
+	border-left:0;
+	color:#333;
+	background-color:#f1f1f1;
+}
+.list-table tr th:first-child{border-left:1px solid #ddd;}
+.list-table tr td{min-height:29px;line-height:29px;overflow:hidden;text-align:center;border:1px solid #ddd;border-left:0;border-top:0;}
+.list-table tr td:first-child{border-left:1px solid #ddd;}
+.list-table input[type='checkbox']{vertical-align: middle;}
+
+/*分页*/
+.search_page{margin:0 auto;height:32px;line-height:32px;text-align:right;padding-right:10px;border:1px solid #ddd;border-top:0; background:url("../img/page_bg.gif") repeat-x;}
+.search_page input{vertical-align:middle;margin-top:-2px;}
+.pbtn_on{cursor:pointer;width:59px;height:24px;line-height:24px;background:url("../img/page.gif") no-repeat;border:0;color:black;}
+.pbtn_off{cursor:none;width:59px;height:24px;line-height:24px;background:url("../img/page_none.gif") no-repeat;border:0;color:#aaaaaa;}
+/*分页*/
+
+.modal{display:none;}
+
+.moban-table{
+	width:100%;
+	min-width:600px;
+	border-collapse:collapse;
+}
+
+.moban-table td{
+	padding:5px;
+	border:1px solid #ddd;
+}
+
+.moban-table input[type="text"]{
+	width:149px;
+	height:20px;
+	line-height:20px;
+	border:1px solid #c4c4c4;
+}
+
+.moban-table select{
+	width:162px;
+	height:20px;
+	line-height:20px;
+	border:1px solid #c4c4c4;
+}
+
+.table-tab{
+	width:14%;
+	text-align:right;
+	background:url("../img/page_bg.gif") repeat-x;
+}
+
+.location-btn{
+	cursor:pointer;
+	width:59px;
+	height:20px;
+	line-height:20px;
+	background:url("../img/location-btn.gif") no-repeat;
+	border:0;
+	color:black;
+}

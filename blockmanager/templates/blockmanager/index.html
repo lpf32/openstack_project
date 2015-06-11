@@ -1,0 +1,276 @@
+<!doctype html>
+{% csrf_token %}
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <title>查询demo</title>
+	
+	<!--artDialog-->
+	{% load staticfiles %}
+	<link rel="stylesheet" href="{% static 'blockmanager/css/artDialog/default.css'%}" />
+
+	<link rel="stylesheet" href="{% static 'blockmanager/css/topo.css' %}" />
+
+ </head>
+ <body>
+	
+	<div class="header">
+		<span class="h-title">块设备管理 v1.0</span>
+	</div>
+	
+	<div class="wrap_div">
+		<div class="content">
+			
+			<!--左边图标区-->
+			<div class="topo-left">
+				
+				  <h4 class="icon-title">查询</h4>
+				  <div class="lct-icon" style="display:block;">
+					<ul class="left-menu">
+						<li><a href="#">概况</a></li>
+						<li class="active"><a href="#">实例</a></li>
+						<li><a href="#">镜像</a></li>
+						<li><a href="#">访问与安全</a></li>
+					</ul>
+				  </div>
+
+				  <h4 class="icon-title">挂载</h4>
+				  <div class="lct-icon">
+					<ul class="left-menu">
+						<li><a href="#">挂载</a></li>
+					</ul>
+				  </div>
+
+				   <h4 class="icon-title">卸载</h4>
+				  <div class="lct-icon">
+					<ul class="left-menu">
+						<li><a href="#">卸载</a></li>
+					</ul>
+				  </div>
+
+			</div>
+			<!--左边图标区-->
+
+			<div  class="topo-right">
+				
+				<!--按钮区域-->
+				<div class="right-title">
+					<button id="new-btn" class="topo-btn new-btn">创建</button>
+					<button id="prop-btn" class="topo-btn prop-btn">导入</button>
+					<button class="topo-btn copy-btn">导出</button>
+				</div>
+				<!--按钮区域-->
+				
+				<div class="right-content">
+
+					<h1>实例</h1>
+					
+					<!--搜索区域-->
+					<form action="search.html?mode=search1" method="post">
+			{% csrf_token %}
+						<div class="search-area">
+							<div>
+								<span>名称：<input type="text" value="" /></span>
+								<span>大小：<input type="text" value="" /></span>
+								<span>格式：<select><option>不限</option><option>格式1</option><option>格式2</option></select></span>
+								<span><input type="submit" class="search_button" value="查询" /></span>
+							</div>				
+						</div>
+					</form>
+					<!--搜索区域-->
+					
+					<div id="eq-area">
+
+						<table class="list-table" cellspacing=0 cellpadding=0>
+							<thead>
+								<tr>
+									<th><input type="checkbox" name="allcheck" /></th>
+									<th>名称</th>
+									<th>大小(G)</th>
+									<th>格式</th>
+									<th>云主机</th>
+									<th>挂载点</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for block in blocks %}
+								<tr>
+									<td><input type="checkbox" /></td>
+									<td>{{ block.block_name }}</td>
+									<td>{{ block.size }}</td>
+									<td>{{ block.type }}</td>
+									{% if block.is_mounted %}
+									<td>{{ block.vm.uuid }}</td>
+									{% else %}
+									<td>NULL</td>
+									{% endif %}
+									<td>{{ block.mountpoint }}</td>
+									<td>
+										<select class="action-select">
+											<option>选择操作</option>
+											<option value="1">挂载</option>
+											<option value="2">卸载</option>
+											<option>删除</option>
+											<option>快照</option>
+											<option>备份</option>
+										</select>
+										<input class="list-id" type="hidden" value="1" />
+									</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+					
+
+						<div class="search_page">
+							<span>共 25 条 每页 <input type="text" style="width:25px;" value="10" /> 条
+								<input type="button" class="pbtn_off" value="首页" />
+								<input type="button" class="pbtn_off" value="上一页" />
+								<input type="button" class="pbtn_on" value="下一页" />
+								<input type="button" class="pbtn_on" value="尾页" />
+								当前 1/2 页
+								转到第 <input type="text" style="width:30px;" value="" /> 页
+								<input type="button" class="pbtn_on" value="跳转" />
+							</span>
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="clear"></div>
+		</div>
+	</div>
+
+	</div>
+
+	<!--弹窗-->
+
+	<!--创建-->
+	<div id="new-win" class="modal">
+		<form id="new-form" action="{% url 'blockmanager:create_block' %}" method="post">
+			{% csrf_token %}
+			<table class="moban-table">
+				<tr>
+					<td class="table-tab">名称</td>
+					<td><input type="text" name="name" value="" /></td>
+				</tr>
+				<tr>
+					<td class="table-tab">大小</td>
+					<td><input type="text" name="size" value="" /></td>
+				</tr>
+				<tr>
+					<td class="table-tab">格式</td>
+					<td>
+						<select name="type">
+							<option>qcow2</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<!--创建-->
+
+	<!--导入-->
+	<div id="prop-win" class="modal">
+		<form id="prop-form" action="search.html?mode=dr" method="post">
+			{% csrf_token %}
+			<table class="moban-table">
+				<tr>
+					<td class="table-tab">导入文件</td>
+					<td><input type="file" value="" /></td>
+				</tr>
+				<tr>
+					<td class="table-tab">导入位置</td>
+					<td><input type="text" value="" /></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<!--导入-->
+
+	<!--挂载-->
+	<div id="location-win" class="modal">
+
+		<!--搜索区域-->
+		<div class="search-area">
+			<div>
+				<span>名称：<input id="gz-s-name" type="text" value="" /></span>
+				<span>IP地址：<input id="gz-s-ip" type="text" value="" /></span>
+				<span><input id="gz-search" type="button" class="search_button" value="查询" /></span>
+			</div>				
+		</div>
+		<!--搜索区域-->
+		
+		<form id="action-form" action="search.html?mode=gz" method="post">
+			{% csrf_token %}
+			<table class="list-table" cellspacing=0 cellpadding=0>
+				<thead>
+					<tr>
+						<th></th>
+						<th>名称</th>
+						<th>IP</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="radio" name="xj-select" /></td>
+						<td>虚机1</td>
+						<td>12.0.23.1</td>
+					</tr>
+					<tr>
+						<td><input type="radio" name="xj-select" /></td>
+						<td>虚机2</td>
+						<td>12.0.23.2</td>
+					</tr>
+					<tr>
+						<td><input type="radio" name="xj-select" /></td>
+						<td>虚机3</td>
+						<td>12.0.23.3</td>
+					</tr>
+					<tr>
+						<td><input type="radio" name="xj-select" /></td>
+						<td>虚机4</td>
+						<td>12.0.23.4</td>
+					</tr>
+					<tr>
+						<td><input type="radio" name="xj-select" /></td>
+						<td>虚机5</td>
+						<td>12.0.23.5</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		
+		<div class="search_page">
+			<span>共 25 条
+				<input type="button" class="pbtn_off" value="首页" />
+				<input type="button" class="pbtn_off" value="上一页" />
+				<input type="button" class="pbtn_on" value="下一页" />
+				<input type="button" class="pbtn_on" value="尾页" />
+				当前 1/2 页
+			</span>
+		</div>
+
+	</div>
+	<!--挂载-->
+
+	<!--弹窗-->
+	
+	<!--jquery-->
+	<script src="{% static 'blockmanager/js/jquery-1.8.0.min.js' %}" ></script>
+	
+	<!--jqueryui-->
+	<script src="{% static 'blockmanager/js/jqueryui/jquery-ui-1.10.4.custom.js' %}" ></script>
+
+	<!--artDialog-->
+	<script src="{% static 'blockmanager/js/artDialog/artDialog.js' %}"></script>
+
+	<script src="{% static 'blockmanager/js/mine.js' %}"></script>
+
+ </body>
+</html>
