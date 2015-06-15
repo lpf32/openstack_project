@@ -137,18 +137,16 @@ def import_block(request):
 	try:
 		#验证input
 		configs = get_config()
-		block_name = request.POST['name']
+		block_name = request.POST.get('name')
 		if block_name == '':
 			raise ValueError('block name field is empty')
-		if len(block_name.split('.')) > 1:
-			raise ValueError('block name is invalid')
 
-		size = request.POST['size']
+		size = request.POST.get('size')
 		if(size == ''):
 			raise ValueError('size field is empty')
 		size = int(size)
 		
-		block_type = request.POST['type']
+		block_type = request.POST.get('type')
 		if block_type == '':
 			raise ValueError('block_type field is empty')
 		if block_type not in configs['block_type']:
@@ -159,7 +157,7 @@ def import_block(request):
 		compute_nodes = res['contacted']
 		des_node = compute_nodes.keys()[int(random.random() * len(compute_nodes))]
 		#验证block 是否存在
-		args = 'ls ' + configs['block_path'] + '/' + block_name + '.' + block_type
+		args = 'ls ' + configs['block_path'] + '/' + block_name
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=des_node, forks=10).run()
 		if res['contacted'][des_node]['stderr'] != '':
 			raise ValueError('the block is not exist!')
@@ -167,13 +165,14 @@ def import_block(request):
 		#如果成功就将此条数据，插入数据库，失败返回 ERROR
 		block = Storage()
 		block.block_name = block_name
-		block.block_path = configs['block_path'] + '/' + block_uuid + '.' + block_type
+		block.block_path = configs['block_path'] + '/' + block_name
 		block.size = str(size)
 		block.type = block_type
 		block.crated_at = timezone.now()
 		block.is_mounted = False
 		block.uuid = block_name
 		block.save()
+		return HttpResponseRedirect(reverse('blockmanager:index'))
 
 	except Exception, e:
 		return HttpResponse(e)
@@ -182,11 +181,11 @@ def import_block(request):
 def search(request):
 	try:
 		#根据条件，查询结果，失败返回 ERROR
-		block_name = request.POST['name']
-		block_type = request.POST['type']
-		vm_name = request.POST['vm']
+		block_name = request.POST.get('name')
+		block_type = request.POST.get('type')
+		vm_name = request.POST.get('vm_name')
 		if block_name == '' and block_type == '' and vm_name == '':
-			raise ValueError('can\'t all empty')
+			blocks = Storage.objects.all()
 		elif block_name != '' and block_type!= '':
 			blocks = Storage.objects.filter(block_name=block_name, type=block_type)
 		elif block_name != '' and vm_name != '':
@@ -199,8 +198,21 @@ def search(request):
 			blocks = Storage.objects.filter(type=block_type)
 		elif vm_name != '':
 			blocks = Storage.objects.filter(vm__name=vm_name)
+		if block_name == None and block_type == None and vm_name == None:
+			blocks = Storage.objects.all()
 
 		#在template，显示结果
+		paginator = Paginator(blocks, 10)
+		page = request.GET.get('page');
+		try:
+			contacts = paginator.page(page)
+		except PageNotAnInteger:
+			contacts = paginator.page(1)
+		except EmptyPage:
+			contacts = paginator.page(paginator.num_pages)
+	
+	#return render(request, 'blockmanager/index.html', {'blocks': blocks})
+		return render_to_response('blockmanager/index.html', {'contacts': contacts}, context_instance=RequestContext(request))
 	except Exception,e:
 		return HttpResponse(e)
 		
@@ -268,13 +280,13 @@ def mount(request):
 		args = 'ls ' + configs['xml_path'] + '/' + xml_name
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=host_name, forks=10).run()
 		if res['contacted'][host_name]['stderr'] != '':
-			raise ValueError('the block is not exist!')
+			raise ValueError('the block is not exist!</p>' + res['contacted'][host_name]['stderr'])
 
 		#挂载硬盘
 		args = '/usr/bin/virsh attach-device ' + instance_id + ' ' + configs['xml_path'] + '/' +  xml_name
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=host_name, forks=10).run()
 		if res['contacted'][host_name]['stderr'] != '':
-			raise ValueError('block mounted failure!')
+			raise ValueError('block mounted failure!</p>' + res['contacted'][host_name]['stderr'])
 
 		#update 数据库
 		vms = VM.objects.filter(uuid=vm_uuid)

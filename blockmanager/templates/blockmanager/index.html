@@ -57,7 +57,6 @@
 				<div class="right-title">
 					<button id="new-btn" class="topo-btn new-btn">创建</button>
 					<button id="prop-btn" class="topo-btn prop-btn">导入</button>
-					<button class="topo-btn copy-btn">导出</button>
 				</div>
 				<!--按钮区域-->
 				
@@ -66,13 +65,13 @@
 					<h1>实例</h1>
 					
 					<!--搜索区域-->
-					<form action="search.html?mode=search1" method="post">
+					<form action="{% url 'blockmanager:search' %}" method="post">
 			{% csrf_token %}
 						<div class="search-area">
 							<div>
-								<span>名称：<input type="text" value="" /></span>
-								<span>大小：<input type="text" value="" /></span>
-								<span>格式：<select><option>不限</option><option>格式1</option><option>格式2</option></select></span>
+								<span>名称：<input type="text" name="name" value="" /></span>
+								<span>虚拟名称：<input type="text" name="vm_name" value="" /></span>
+								<span>格式：<select name="type"><option></option><option>qcow2</option></select></span>
 								<span><input type="submit" class="search_button" value="查询" /></span>
 							</div>				
 						</div>
@@ -179,16 +178,20 @@
 
 	<!--导入-->
 	<div id="prop-win" class="modal">
-		<form id="prop-form" action="search.html?mode=dr" method="post">
+		<form id="prop-form" action="{% url 'blockmanager:import' %}" method="post">
 			{% csrf_token %}
 			<table class="moban-table">
 				<tr>
-					<td class="table-tab">导入文件</td>
-					<td><input type="file" value="" /></td>
+					<td class="table-tab">文件名称</td>
+					<td><input type="text" name="name" value="" /></td>
 				</tr>
 				<tr>
-					<td class="table-tab">导入位置</td>
-					<td><input type="text" value="" /></td>
+					<td class="table-tab">文件大小</td>
+					<td><input type="text" name="size" value="" /></td>
+				</tr>
+				<tr>
+					<td class="table-tab">文件格式</td>
+					<td><input type="text" name="type" value="" /></td>
 				</tr>
 			</table>
 		</form>
@@ -209,8 +212,8 @@
 		<!--搜索区域-->
 		
 		<form  id="action-form" action="{% url 'blockmanager:mount' %}" method="post">
-			<input id="gz-list-id" type="hidden" name='block_id' value=""/>
 			{% csrf_token %}
+			<input id="gz-list-id" type="hidden" name='block_id' value=""/>
 			<table class="list-table" cellspacing=0 cellpadding=0>
 				<thead>
 					<tr>

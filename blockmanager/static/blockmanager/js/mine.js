@@ -117,7 +117,7 @@ $(function(){
 
 			$.ajax({
 				type: "POST",
-				url: "umount/",
+				url: "/blockmanager/umount/",
 				data: {block_id:listid_2},
 				cache:false,
 				beforeSend:function(xhr, settings){
@@ -143,7 +143,7 @@ $(function(){
 
 			$.ajax({
 				type: "POST",
-				url: "delete/",
+				url: "/blockmanager/delete/",
 				data: {block_id:listid_3},
 				cache:false,
 				beforeSend:function(xhr, settings){
@@ -172,7 +172,7 @@ $(function(){
 
 		$.ajax({
 			type: "GET",
-			url: "get_vms/",
+			url: "/blockmanager/get_vms/",
 			data: {the_name: name, the_ip: ip},
 			cache:false,
 			success: function(data){

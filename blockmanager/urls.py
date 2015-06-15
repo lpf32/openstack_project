@@ -9,4 +9,6 @@ urlpatterns = patterns('',
 		url(r'^mount/$', views.mount, name="mount"),
 		url(r'^umount/$', views.umount, name="umount"),
 		url(r'^delete/$', views.delete, name="delete"),
+		url(r'^search/$', views.search, name="search"),
+		url(r'^import/$', views.import_block, name="import"),
 		)
