@@ -1,3 +1,17 @@
+function getCookie(name) {
+	var cookieValue = null;
+	if (document.cookie && document.cookie != ''){
+		 var cookies = document.cookie.split(';');
+		 for(var i = 0; i < cookies.length; i++){
+			 var cookie = jQuery.trim(cookies[i]);
+			 if(cookie.substring(0, name.length + 1) == (name + '=')){
+				 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				 break;
+			 }
+		}
+	}
+	return cookieValue;
+}
 $(function(){
 
 	/*图标手风琴效果*/
@@ -73,6 +87,8 @@ $(function(){
 		if(i == 1)//挂载
 		{
 			
+			var listid_1 = $(this).next(".list-id").val();
+			$("#gz-list-id").val(listid_1);
 			art.dialog({
 				id: 'win4',
 				title: '挂载',
@@ -96,43 +112,71 @@ $(function(){
 		}
 		else if(i == 2) //卸载
 		{
-			var listid = $(this).next(".list-id").val();
+			var listid_2 = $(this).next(".list-id").val();
+			var csrftoken = getCookie('csrftoken');
 
 			$.ajax({
 				type: "POST",
-				url: "action/xz.html",
-				data: {'id':listid},
+				url: "umount/",
+				data: {block_id:listid_2},
 				cache:false,
-				beforeSend:function(){
+				beforeSend:function(xhr, settings){
+					 xhr.setRequestHeader("X-CSRFToken", csrftoken);
+					if(!confirm("确认要卸载？"))
+					{
+						return false;
+					}
+				},
+				success: function(data){
+					//$("#eq-area").html(data);
+					alert(data)
+					window.location.reload(true)
+				}
+			});
+
+		}
+
+		else if(i == 3) //删除
+		{
+			var listid_3 = $(this).next(".list-id").val();
+			var csrftoken = getCookie('csrftoken');
+
+			$.ajax({
+				type: "POST",
+				url: "delete/",
+				data: {block_id:listid_3},
+				cache:false,
+				beforeSend:function(xhr, settings){
+					 xhr.setRequestHeader("X-CSRFToken", csrftoken);
 					if(!confirm("确认要删除？"))
 					{
 						return false;
 					}
 				},
 				success: function(data){
-					$("#eq-area").html(data);
+					//$("#eq-area").html(data);
+					alert(data)
+					window.location.reload(true)
+					//history.go(0)
 				}
 			});
 
 		}
-
 	});
 
 	//搜索挂载
 	$("#gz-search").live("click",function(){
 
-		var name = $("#gz-search-name").val();
-		var ip = $("#gz-search-ip").val(); 
+		var name = $("#gz-s-name").val();
+		var ip = $("#gz-s-ip").val(); 
 
 		$.ajax({
-			type: "POST",
+			type: "GET",
 			url: "get_vms/",
-			data: {'name':name,'ip':ip},
+			data: {the_name: name, the_ip: ip},
 			cache:false,
 			success: function(data){
-				//$("#action-form").html(data);
-				alert(data);
-				console.log("success");
+				$("#vm-list").html(data['content']);
 			}
 		});
 

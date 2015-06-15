@@ -3,7 +3,7 @@ path: /var/lib/nova/instances/block
 type: qcow2
 
 [xml]
-path: //var/lib/nova/instances/xml
+path: /var/lib/nova/instances/xml
 
 [compute]
 hosts: node02.openstack.com, node03.openstack.com

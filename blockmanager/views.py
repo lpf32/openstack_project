@@ -4,6 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.template import RequestContext
+from django_ajax.decorators import ajax
+from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import string
 import ansible.runner
@@ -21,13 +24,64 @@ from novaclient import client
 
 def index(request):
 	blocks = Storage.objects.all()
+	paginator = Paginator(blocks, 10)
+	page = request.GET.get('page');
+	try:
+		contacts = paginator.page(page)
+	except PageNotAnInteger:
+		contacts = paginator.page(1)
+	except EmptyPage:
+		contacts = paginator.page(paginator.num_pages)
 	
 	#return render(request, 'blockmanager/index.html', {'blocks': blocks})
-	return render_to_response('blockmanager/index.html', {'blocks': blocks}, context_instance=RequestContext(request))
+	return render_to_response('blockmanager/index.html', {'contacts': contacts}, context_instance=RequestContext(request))
 
 
-def get_vms():
-	return HttpResponse('success ajax!')
+@ajax
+def get_vms(request):
+	try:
+		#验证input
+		configs = get_config()
+		ip = request.GET.get('the_ip')	
+		name = request.GET.get('the_name')	
+		if ip == '' and name == '':
+			raise ValueError("argument error!")
+
+		#通过nova api 取得nova servers list
+		auth = v2.Password(auth_url=configs['auth_url'], username=configs['username'], 
+				password=configs['password'], tenant_name=configs['tenant_name'])
+		sess = session.Session(auth=auth)
+		nova = client.Client('2', session=sess)
+		vms = nova.servers
+		vms = nova.servers.list()
+
+		#得到符合要求的vms
+		des_vms = []
+		for vm in vms:
+			if ip != '' and name != '':
+				if vm.name == name and vm.networks[vm.networks.keys()[0]][0] == ip:
+					des_vms.append(vm)
+			elif ip != '':
+				if vm.networks[vm.networks.keys()[0]][0] == ip:
+					des_vms.append(vm)
+			elif name != '':
+				if vm.name == name:
+					des_vms.append(vm)
+					#return HttpResponse(vm.id)
+
+		#生成html代码
+		html_str = ''
+		for vm in des_vms:
+			html_str += '<tr>\n<td><input type="radio" name="xj-select" /></td>\n' \
+					+ '<td>'+ vm.name + '</td>\t' + '<td>'+ vm.networks[vm.networks.keys()[0]][0] \
+					+ '</td>\t' + '<td name="vm_uuid">' + vm.id +'</td></tr>' + '<input type="hidden" name="vm_uuid" value="' \
+					+ vm.id + '"/>'
+
+
+		return HttpResponse(html_str)
+
+	except Exception,e:
+		return HttpResponse(e)
 
 
 def create_block(request):
@@ -156,23 +210,28 @@ def mount(request):
 		configs = get_config()
 		#验证参数正确性，vm uuid，block uuid，如果错误 return ERROR
 		vm_uuid = request.POST['vm_uuid']
-		block_uuid = request.POST['block_uuid']
-		if vm_uuid == '' or block_uuid == '':
+		block_id = request.POST['block_id']
+		if vm_uuid == '' or block_id == '':
 			raise ValueError('fields can\'t be empty!')
 		
 		#通过block uuid 查询block，如果没有 return ERROR
-		block = get_object_or_404(Storage, uuid=block_uuid)
+		block = get_object_or_404(Storage, pk=block_id)
+		block_uuid = block.uuid
+
+		#如果已经挂载直接退出
+		if block.is_mounted == True:
+			return HttpResponse('已经挂载过！')
 
 		#通过nova api 得到 vm 实例，如果找不到，reuturn ERROR
 		auth = v2.Password(auth_url=configs['auth_url'], username=configs['username'], 
-				password=configs['password'], tanant_name=configs['tenant_name'])
+				password=configs['password'], tenant_name=configs['tenant_name'])
 		sess = session.Session(auth=auth)
 		nova = client.Client('2', session=sess)
-		des_vm = nova.servers.get('3249f9ed-d3bb-4064-a427-7d42081825ca')
-		instance_name = getattr(des_vm, 'OS-EXT-SRV-ATTR:instance_name')
+		des_vm = nova.servers.get(vm_uuid)
+		instance_id = getattr(des_vm, 'OS-EXT-SRV-ATTR:instance_name')
 		host_name = getattr(des_vm, 'OS-EXT-SRV-ATTR:hypervisor_hostname')
 
-		if host_name not in configs['hosts']:
+		if host_name not in configs['compute_nodes']:
 			raise ValueError('vm host is not in config.py')
 		#xml_name = $(block_uuid).xml。 build uxml文件， 如果返回失败，return ERROR
 		xml_name = block_uuid + '.xml'
@@ -183,6 +242,9 @@ def mount(request):
 			mountpoint = 'vdb'
 		else:
 			mountpoint = "vd" + string.ascii_lowercase[len(mounted_blocks) + 1]
+
+		if len(mounted_blocks) != 0 and mounted_blocks[len(mounted_blocks) - 1].mountpoint >= mountpoint:
+			mountpoint = 'vd' + string.ascii_lowercase[string.ascii_lowercase.index(mounted_blocks[len(mounted_blocks) - 1].mountpoint[-1]) + 1]
 
 		#bulid xml 文件
 		root = etree.Element('disk', type='file', device='disk')
@@ -195,17 +257,23 @@ def mount(request):
 		sXml = etree.tostring(root, pretty_print=True)
 		f = open('xml/' + xml_name, 'w')
 		f.write(sXml)
+		f.close()
 
 		#将xml文件，发送的vm.host
-		args = 'src=xml/' + xml_name + ' dest=' + configs['xml_path']
+		#args = 'src=xml/' + xml_name + ' dest=' + configs['xml_path']
+		args = 'src=xml/' + xml_name +' dest=' + configs['xml_path']
 		res = ansible.runner.Runner(module_name='copy', module_args=args, pattern=host_name, forks=10).run()
-		if res['contacted'][host_name]['failed'] == True:
-			raise ValueError('transit xml file failure!')
+
+		#验证xml文件传输是否成功
+		args = 'ls ' + configs['xml_path'] + '/' + xml_name
+		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=host_name, forks=10).run()
+		if res['contacted'][host_name]['stderr'] != '':
+			raise ValueError('the block is not exist!')
 
 		#挂载硬盘
-		args = '/usr/bin/virsh attach-device ' + mountpoint + ' ' + configs['xml_path'] + '/' +  xml_name
+		args = '/usr/bin/virsh attach-device ' + instance_id + ' ' + configs['xml_path'] + '/' +  xml_name
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=host_name, forks=10).run()
-		if res['contacted'][des_node]['stderr'] != '':
+		if res['contacted'][host_name]['stderr'] != '':
 			raise ValueError('block mounted failure!')
 
 		#update 数据库
@@ -215,8 +283,14 @@ def mount(request):
 			vm.uuid = vm_uuid
 			vm.host = host_name
 			vm.instance_id = instance_id
-			vm.ip = des_vm.networks[des_vm.networks.keys()[0]]
+			vm.ip = des_vm.networks[des_vm.networks.keys()[0]][0]
 			vm.tenant_id = des_vm.tenant_id
+			vm.name = des_vm.name
+			vm.save()
+			vm.storage_set.add(block)
+			vm.save()
+		else:
+			vm = vms[0]
 			vm.storage_set.add(block)
 			vm.save()
 
@@ -227,6 +301,10 @@ def mount(request):
 		block.is_mounted = True
 		block.save()
 
+		return HttpResponseRedirect(reverse('blockmanager:index'))
+
+	except KeyError,e:
+		return HttpResponse('KeyError: ' + str(e))
 	except Exception,e:
 		return HttpResponse(e)
 
@@ -234,22 +312,30 @@ def mount(request):
 def umount(request):
 	try:
 		#根据条件，查询结果，失败返回 ERROR
-		block_uuid = request.POST['uuid']
+		block_id = request.POST.get('block_id')
 		#取得block，vm 实例
-		block = get_object_or_404(Storage, uuid=block_uuid)
-		vm = VM.objects.filter(storage=block.id)
+		block = get_object_or_404(Storage, pk=block_id)
+		vm = VM.objects.get(storage__id=block.id)
+		#判断是否重复卸载
+		if block.is_mounted == False:
+			raise ValueError("此存储没有被挂载")
 		#根据实例参数，调用API，卸载block， 如果失败  return ERROR
 		args = '/usr/bin/virsh detach-device ' + vm.instance_id + ' ' + block.xml_path + ' --live' 
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=vm.host, forks=10).run()
-		if res['contacted'][des_node]['stderr'] != '':
+		if res['contacted'][vm.host]['stderr'] != '':
 			raise ValueError("detach device failure!")
 
+
 		#update 数据库
-		block.mounted_at = ''
-		block.mountpoint = ''
+		block.mounted_at = None
+		block.mountpoint = None
 		block.is_mounted = False
 		block.save()
 
+		return HttpResponse('success')
+
+	except KeyError,e:
+		return HttpResponse('KeyError: ' + str(e))
 	except Exception,e:
 		return HttpResponse(e)
 
@@ -257,10 +343,31 @@ def umount(request):
 def delete(request):
 	try:
 		#根据条件，查询结果，失败返回 ERROR
-		block_uuid = request.POST['uuid']
+		block_id = request.POST.get('block_id')
+
 		#取得block，vm 实例
-		block = get_object_or_404(Storage, uuid=block_uuid)
+		block = get_object_or_404(Storage, pk=block_id)
+
+		#筛选出一个合适的host
+		res = ansible.runner.Runner(module_name='ping', module_args='', pattern='compute', forks=10).run()
+		compute_nodes = res['contacted']
+		des_node = compute_nodes.keys()[int(random.random() * len(compute_nodes))]
+
+		#删除block
+		if block.xml_path == None:
+			args = 'rm -f ' + block.block_path
+		else:
+			args = 'rm -f ' + block.block_path + ' ' + block.xml_path
+
+		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=des_node, forks=10).run()
+		if res['contacted'][des_node]['stderr'] != '':
+			raise ValueError(res['contacted'][des_node]['stderr'])
+
 		block.delete()
+
+		return HttpResponse('success')
+	except KeyError,e:
+		return HttpResponse('KeyError' + str(e))
 	except Exception,e:
 		return HttpResponse(e)
 

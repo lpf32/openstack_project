@@ -90,11 +90,12 @@
 									<th>格式</th>
 									<th>云主机</th>
 									<th>挂载点</th>
+									<th>block id</th>
 									<th>操作</th>
 								</tr>
 							</thead>
 							<tbody>
-							{% for block in blocks %}
+							{% for block in contacts %}
 								<tr>
 									<td><input type="checkbox" /></td>
 									<td>{{ block.block_name }}</td>
@@ -106,16 +107,17 @@
 									<td>NULL</td>
 									{% endif %}
 									<td>{{ block.mountpoint }}</td>
+									<td>{{ block.uuid }}</td>
 									<td>
 										<select class="action-select">
 											<option>选择操作</option>
 											<option value="1">挂载</option>
 											<option value="2">卸载</option>
-											<option>删除</option>
+											<option value="3">删除</option>
 											<option>快照</option>
 											<option>备份</option>
 										</select>
-										<input class="list-id" type="hidden" value="1" />
+										<input class="list-id" type="hidden" value="{{ block.id }}" />
 									</td>
 								</tr>
 							{% endfor %}
@@ -124,14 +126,14 @@
 					
 
 						<div class="search_page">
-							<span>共 25 条 每页 <input type="text" style="width:25px;" value="10" /> 条
-								<input type="button" class="pbtn_off" value="首页" />
-								<input type="button" class="pbtn_off" value="上一页" />
-								<input type="button" class="pbtn_on" value="下一页" />
-								<input type="button" class="pbtn_on" value="尾页" />
-								当前 1/2 页
-								转到第 <input type="text" style="width:30px;" value="" /> 页
-								<input type="button" class="pbtn_on" value="跳转" />
+							<span>
+								{% if contacts.has_previous %}
+								<a href="{% url 'blockmanager:index'%}?page={{ contacts.previous_page_number }}" style='text-decoration:underline'>previous</a>
+								{% endif %}
+								Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}
+								{% if contacts.has_next %}
+								<a href="{% url 'blockmanager:index' %}?page={{ contacts.next_page_number }}" style='text-decoration:underline'>next</a>
+								{% endif %}
 							</span>
 						</div>
 
@@ -206,7 +208,8 @@
 		</div>
 		<!--搜索区域-->
 		
-		<form id="action-form" action="search.html?mode=gz" method="post">
+		<form  id="action-form" action="{% url 'blockmanager:mount' %}" method="post">
+			<input id="gz-list-id" type="hidden" name='block_id' value=""/>
 			{% csrf_token %}
 			<table class="list-table" cellspacing=0 cellpadding=0>
 				<thead>
@@ -214,46 +217,13 @@
 						<th></th>
 						<th>名称</th>
 						<th>IP</th>
+						<th>uuid</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr>
-						<td><input type="radio" name="xj-select" /></td>
-						<td>虚机1</td>
-						<td>12.0.23.1</td>
-					</tr>
-					<tr>
-						<td><input type="radio" name="xj-select" /></td>
-						<td>虚机2</td>
-						<td>12.0.23.2</td>
-					</tr>
-					<tr>
-						<td><input type="radio" name="xj-select" /></td>
-						<td>虚机3</td>
-						<td>12.0.23.3</td>
-					</tr>
-					<tr>
-						<td><input type="radio" name="xj-select" /></td>
-						<td>虚机4</td>
-						<td>12.0.23.4</td>
-					</tr>
-					<tr>
-						<td><input type="radio" name="xj-select" /></td>
-						<td>虚机5</td>
-						<td>12.0.23.5</td>
-					</tr>
+				<tbody id="vm-list">
 				</tbody>
 			</table>
 		</form>
-		
-		<div class="search_page">
-			<span>共 25 条
-				<input type="button" class="pbtn_off" value="首页" />
-				<input type="button" class="pbtn_off" value="上一页" />
-				<input type="button" class="pbtn_on" value="下一页" />
-				<input type="button" class="pbtn_on" value="尾页" />
-				当前 1/2 页
-			</span>
 		</div>
 
 	</div>

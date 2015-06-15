@@ -8,7 +8,7 @@ class VM(models.Model):
     host = models.CharField(max_length=200)
     instance_id = models.CharField(max_length=200)
     ip = models.CharField(max_length=200)
-    tanant_id = models.CharField(max_length=200)
+    tenant_id = models.CharField(max_length=200)
 
 
 class Storage(models.Model):
@@ -19,7 +19,7 @@ class Storage(models.Model):
     xml_path = models.CharField(max_length=200, null=True)
     size = models.CharField(max_length=200)
     type = models.CharField(max_length=200)
-    tanant_id = models.CharField(max_length=200, null=True)
+    tenant_id = models.CharField(max_length=200, null=True)
     created_at = models.DateTimeField('block created', null=True)
     mounted_at = models.DateTimeField('block mounted', null=True)
     mountpoint = models.CharField(max_length=200, null=True)
