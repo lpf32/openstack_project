@@ -24,7 +24,7 @@ class Storage(models.Model):
     mounted_at = models.DateTimeField('block mounted', null=True)
     mountpoint = models.CharField(max_length=200, null=True)
     is_mounted = models.BooleanField(False)
-    host_group = models.CharField(max_length=200, null=True)
+    compute_group = models.CharField(max_length=200, null=True)
     used_size = models.CharField(max_length=200, null=True)
     uuid = models.CharField(max_length=200)
 

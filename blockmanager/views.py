@@ -23,6 +23,8 @@ from novaclient import client
 
 
 def index(request):
+	configs = get_config()
+	compute_group = configs['compute_group'].split(',')
 	blocks = Storage.objects.all()
 	paginator = Paginator(blocks, 10)
 	page = request.GET.get('page');
@@ -34,7 +36,7 @@ def index(request):
 		contacts = paginator.page(paginator.num_pages)
 	
 	#return render(request, 'blockmanager/index.html', {'blocks': blocks})
-	return render_to_response('blockmanager/index.html', {'contacts': contacts}, context_instance=RequestContext(request))
+	return render_to_response('blockmanager/index.html', {'contacts': contacts, 'compute_group':compute_group}, context_instance=RequestContext(request))
 
 
 @ajax
@@ -102,9 +104,13 @@ def create_block(request):
 			raise ValueError('block_type field is empty')
 		if block_type not in configs['block_type']:
 			raise ValueError('block type is undefined')
+
+		compute_group = request.POST.get('compute_group')
+		if compute_group == '':
+			raise ValueError('compute group field is empty')
 		
 		#筛选出一个合适的host
-		res = ansible.runner.Runner(module_name='ping', module_args='', pattern='compute', forks=10).run()
+		res = ansible.runner.Runner(module_name='ping', module_args='', pattern=compute_group, forks=10).run()
 		compute_nodes = res['contacted']
 		des_node = compute_nodes.keys()[int(random.random() * len(compute_nodes))]
 
@@ -127,6 +133,7 @@ def create_block(request):
 		block.crated_at = timezone.now()
 		block.is_mounted = False
 		block.uuid = block_uuid
+		block.compute_group = compute_group
 		block.save()
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 	except Exception, e:
@@ -138,11 +145,14 @@ def import_block(request):
 		#验证input
 		configs = get_config()
 		block_name = request.POST.get('name')
+		compute_group = request.POST.get('compute_group')
 		if block_name == '':
 			raise ValueError('block name field is empty')
+		if compute_group == '':
+			raise ValueError('compute group field is empty')
 
 		#筛选出一个合适的host
-		res = ansible.runner.Runner(module_name='ping', module_args='', pattern='compute', forks=10).run()
+		res = ansible.runner.Runner(module_name='ping', module_args='', pattern=compute_group, forks=10).run()
 		compute_nodes = res['contacted']
 		des_node = compute_nodes.keys()[int(random.random() * len(compute_nodes))]
 		#验证block 是否存在
@@ -175,6 +185,7 @@ def import_block(request):
 		block.crated_at = timezone.now()
 		block.is_mounted = False
 		block.uuid = block_name
+		block.compute_group = compute_group
 		block.save()
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 
@@ -247,8 +258,12 @@ def mount(request):
 		instance_id = getattr(des_vm, 'OS-EXT-SRV-ATTR:instance_name')
 		host_name = getattr(des_vm, 'OS-EXT-SRV-ATTR:hypervisor_hostname')
 
-		if host_name not in configs['compute_nodes']:
-			raise ValueError('vm host is not in config.py')
+		#根据block compute group 得到所有可能的compute node，如果vm 不在这些compute node中，return ERROR
+		res = ansible.runner.Runner(module_name='ping', module_args='', pattern=block.compute_group, forks=10).run()
+		compute_nodes = res['contacted']
+
+		if host_name not in compute_nodes:
+			raise ValueError('vm and block are not in the same compute group!')
 
 		#如果block 的 tenant_id不一致， 不能挂载
 		if block.tenant_id != None and block.tenant_id != des_vm.tenant_id:
@@ -375,7 +390,7 @@ def delete(request):
 			raise ValueError("请先卸载，再删除！")
 
 		#筛选出一个合适的host
-		res = ansible.runner.Runner(module_name='ping', module_args='', pattern='compute', forks=10).run()
+		res = ansible.runner.Runner(module_name='ping', module_args='', pattern=block.compute_group, forks=10).run()
 		compute_nodes = res['contacted']
 		des_node = compute_nodes.keys()[int(random.random() * len(compute_nodes))]
 
@@ -407,6 +422,7 @@ def get_config():
 		block_type = config.get('block', 'type')
 		xml_path = config.get('xml', 'path')
 		compute_nodes = config.get('compute', 'hosts')
+		compute_group = config.get('compute', 'compute_group')
 		auth_url = config.get('auth', 'auth_url')
 		username = config.get('auth', 'username')
 		password = config.get('auth', 'password')
@@ -417,6 +433,7 @@ def get_config():
 		configs['username']	= username
 		configs['password'] = password
 		configs['tenant_name'] = tenant_name
+		configs['compute_group'] = compute_group
 		return configs
 	except ConfigParser.NoSectionError, e:
 		return HttpResponse('config parser error: ' + str(e))

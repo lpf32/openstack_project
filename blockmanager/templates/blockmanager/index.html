@@ -171,6 +171,16 @@
 						</select>
 					</td>
 				</tr>
+				<tr>
+					<td class="table-tab">节点集群</td>
+					<td>
+						<select name="compute_group">
+							{% for group in compute_group %}
+							<option>{{ group }}</option>
+							{% endfor %}
+						</select>
+					</td>
+				</tr>
 			</table>
 		</form>
 	</div>
@@ -188,8 +198,10 @@
 				<tr>
 					<td class="table-tab">节点集群</td>
 					<td>
-						<select name="nodes_group">
-							<option>qcow2</option>
+						<select name="compute_group">
+							{% for group in compute_group %}
+							<option>{{ group }}</option>
+							{% endfor %}
 						</select>
 					</td>
 				</tr>
