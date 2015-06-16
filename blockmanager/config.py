@@ -7,6 +7,7 @@ path: /var/lib/nova/instances/xml
 
 [compute]
 hosts: node02.openstack.com, node03.openstack.com
+nodes_group:compute0
 
 [auth]
 auth_url: http://control:35357/v2.0

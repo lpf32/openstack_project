@@ -122,7 +122,7 @@ def create_block(request):
 		block = Storage()
 		block.block_name = block_name
 		block.block_path = configs['block_path'] + '/' + block_uuid + '.' + block_type
-		block.size = str(size)
+		block.size = str(size) + 'G'
 		block.type = block_type
 		block.crated_at = timezone.now()
 		block.is_mounted = False
@@ -141,17 +141,6 @@ def import_block(request):
 		if block_name == '':
 			raise ValueError('block name field is empty')
 
-		size = request.POST.get('size')
-		if(size == ''):
-			raise ValueError('size field is empty')
-		size = int(size)
-		
-		block_type = request.POST.get('type')
-		if block_type == '':
-			raise ValueError('block_type field is empty')
-		if block_type not in configs['block_type']:
-			raise ValueError('block type is undefined')
-
 		#筛选出一个合适的host
 		res = ansible.runner.Runner(module_name='ping', module_args='', pattern='compute', forks=10).run()
 		compute_nodes = res['contacted']
@@ -161,13 +150,28 @@ def import_block(request):
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=des_node, forks=10).run()
 		if res['contacted'][des_node]['stderr'] != '':
 			raise ValueError('the block is not exist!')
+		
+		#如果已经导入过返回ERROR
+		result = Storage.objects.filter(uuid=block_name)
+		if len(result) > 0:
+			raise ValueError('已经导入过，不能重复导入')
+
+		#得到block 的虚拟大小、实际使用大小、类型
+		args = '/usr/bin/qemu-img info ' + configs['block_path'] + '/' + block_name
+		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=des_node, forks=10).run()
+		d = {}
+		for s in res['contacted'][des_node]['stdout'].split('\n'):
+			key,value = s.split(":")
+			d[key.strip()] = value.strip()
+
 
 		#如果成功就将此条数据，插入数据库，失败返回 ERROR
 		block = Storage()
 		block.block_name = block_name
 		block.block_path = configs['block_path'] + '/' + block_name
-		block.size = str(size)
-		block.type = block_type
+		block.size = d['virtual size'].split('(')[0]
+		block.type = d['file format']
+		block.used_size = d['disk size']
 		block.crated_at = timezone.now()
 		block.is_mounted = False
 		block.uuid = block_name
