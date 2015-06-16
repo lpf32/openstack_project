@@ -245,6 +245,11 @@ def mount(request):
 
 		if host_name not in configs['compute_nodes']:
 			raise ValueError('vm host is not in config.py')
+
+		#如果block 的 tenant_id不一致， 不能挂载
+		if block.tenant_id != None and block.tenant_id != des_vm.tenant_id:
+			return ValueError("tenant id 不一致");
+
 		#xml_name = $(block_uuid).xml。 build uxml文件， 如果返回失败，return ERROR
 		xml_name = block_uuid + '.xml'
 
@@ -311,6 +316,7 @@ def mount(request):
 		block.mounted_at = timezone.now()
 		block.mountpoint = mountpoint
 		block.is_mounted = True
+		block.tenant_id = des_vm.tenant_id
 		block.save()
 
 		return HttpResponseRedirect(reverse('blockmanager:index'))
@@ -335,7 +341,7 @@ def umount(request):
 		args = '/usr/bin/virsh detach-device ' + vm.instance_id + ' ' + block.xml_path + ' --live' 
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=vm.host, forks=10).run()
 		if res['contacted'][vm.host]['stderr'] != '':
-			raise ValueError("detach device failure!")
+			raise ValueError("detach device failure!</p>" + res['contacted'][vm.host]['stderr'])
 
 
 		#update 数据库
@@ -359,6 +365,10 @@ def delete(request):
 
 		#取得block，vm 实例
 		block = get_object_or_404(Storage, pk=block_id)
+
+		#如果此block 处于挂载状态，返回错误
+		if block.is_mounted == True:
+			raise ValueError("请先卸载，再删除！")
 
 		#筛选出一个合适的host
 		res = ansible.runner.Runner(module_name='ping', module_args='', pattern='compute', forks=10).run()

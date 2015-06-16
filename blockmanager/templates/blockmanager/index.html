@@ -101,7 +101,7 @@
 									<td>{{ block.size }}</td>
 									<td>{{ block.type }}</td>
 									{% if block.is_mounted %}
-									<td>{{ block.vm.uuid }}</td>
+									<td>{{ block.vm.name}}::{{ block.vm.uuid }}</td>
 									{% else %}
 									<td>NULL</td>
 									{% endif %}
