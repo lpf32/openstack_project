@@ -15,6 +15,8 @@ import uuid
 from blockmanager.models import VM, Storage, Snapshot
 from lxml import etree
 import random
+import logging
+import logging.config
 
 from keystoneclient.auth.identity import v2
 from keystoneclient import session
@@ -135,8 +137,19 @@ def create_block(request):
 		block.uuid = block_uuid
 		block.compute_group = compute_group
 		block.save()
+
+		#log
+		name = ''
+		mesStr = 'create block ' + str(size) + 'G named ' + block_name
+		logger = getLogger(name)
+		logger.info(mesStr)
+
+		#success
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 	except Exception, e:
+		name = ''
+		logger = getLogger(name)
+		logger.error(e)
 		return HttpResponse(e)
 
 	
@@ -171,8 +184,12 @@ def import_block(request):
 		res = ansible.runner.Runner(module_name='shell', module_args=args, pattern=des_node, forks=10).run()
 		d = {}
 		for s in res['contacted'][des_node]['stdout'].split('\n'):
-			key,value = s.split(":")
-			d[key.strip()] = value.strip()
+			item = s.split(":")
+			if item[0].strip() == 'file format' or item[0].strip() == 'virtual size' \
+					or item[0].strip() == 'disk size':
+				key, value = item
+				d[key.strip()] = value.strip()
+
 
 
 		#如果成功就将此条数据，插入数据库，失败返回 ERROR
@@ -187,15 +204,27 @@ def import_block(request):
 		block.uuid = block_name
 		block.compute_group = compute_group
 		block.save()
+
+		#log
+		name = ''
+		mesStr = 'import block ' + d['virtual size'].split('(')[0] + ' named ' + block_name
+		logger = getLogger(name)
+		logger.info(mesStr)
+
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 
 	except Exception, e:
+		name = ''
+		logger = getLogger(name)
+		logger.error(e)
 		return HttpResponse(e)
 
 
 def search(request):
 	try:
 		#根据条件，查询结果，失败返回 ERROR
+		configs = get_config()
+		compute_group = configs['compute_group'].split(',')
 		block_name = request.POST.get('name')
 		block_type = request.POST.get('type')
 		vm_name = request.POST.get('vm_name')
@@ -227,7 +256,7 @@ def search(request):
 			contacts = paginator.page(paginator.num_pages)
 	
 	#return render(request, 'blockmanager/index.html', {'blocks': blocks})
-		return render_to_response('blockmanager/index.html', {'contacts': contacts}, context_instance=RequestContext(request))
+		return render_to_response('blockmanager/index.html', {'contacts': contacts, 'compute_group': compute_group}, context_instance=RequestContext(request))
 	except Exception,e:
 		return HttpResponse(e)
 		
@@ -249,7 +278,7 @@ def mount(request):
 		if block.is_mounted == True:
 			return HttpResponse('已经挂载过！')
 
-		#通过nova api 得到 vm 实例，如果找不到，reuturn ERROR
+		#通过nova api 得到 vm 实例，如果找不到，return ERROR
 		auth = v2.Password(auth_url=configs['auth_url'], username=configs['username'], 
 				password=configs['password'], tenant_name=configs['tenant_name'])
 		sess = session.Session(auth=auth)
@@ -338,11 +367,21 @@ def mount(request):
 		block.tenant_id = des_vm.tenant_id
 		block.save()
 
+
+		#log
+		name = ''
+		mesStr = 'mount ' + block.uuid + ' at ' + mountpoint + ' on ' + vm.name
+		logger = getLogger(name)
+		logger.info(mesStr)
+
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 
 	except KeyError,e:
 		return HttpResponse('KeyError: ' + str(e))
 	except Exception,e:
+		name = ''
+		logger = getLogger(name)
+		logger.error(e)
 		return HttpResponse(e)
 
 
@@ -363,17 +402,27 @@ def umount(request):
 			raise ValueError("detach device failure!</p>" + res['contacted'][vm.host]['stderr'])
 
 
+		mountpoint = block.mountpoint
 		#update 数据库
 		block.mounted_at = None
 		block.mountpoint = None
 		block.is_mounted = False
 		block.save()
 
+		#log
+		name = ''
+		mesStr = 'unmount ' + str(block.uuid) + ' off ' + str(mountpoint) + ' on ' + str(vm.name)
+		logger = getLogger(name)
+		logger.info(mesStr)
+
 		return HttpResponse('success')
 
 	except KeyError,e:
 		return HttpResponse('KeyError: ' + str(e))
 	except Exception,e:
+		name = ''
+		logger = getLogger(name)
+		logger.error(e)
 		return HttpResponse(e)
 
 
@@ -406,10 +455,19 @@ def delete(request):
 
 		block.delete()
 
+		#log
+		name = ''
+		mesStr = 'delete block ' + block.uuid + ' named ' + block.block_name
+		logger = getLogger(name)
+		logger.info(mesStr)
+
 		return HttpResponse('success')
 	except KeyError,e:
 		return HttpResponse('KeyError' + str(e))
 	except Exception,e:
+		name = ''
+		logger = getLogger(name)
+		logger.error(e)
 		return HttpResponse(e)
 
 
@@ -441,4 +499,13 @@ def get_config():
 		return HttpResponse(str(e))
 		
 
+def getLogger(name):
+	try:
+		if name == '' or name == None:
+			name = ''
 
+		logging.config.fileConfig('blockmanager/log.conf')
+		logger = logging.getLogger(name)
+		return logger
+	except Exception,e:
+		return HttpResponse(e)
