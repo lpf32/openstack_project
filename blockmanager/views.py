@@ -296,7 +296,7 @@ def mount(request):
 
 		#如果block 的 tenant_id不一致， 不能挂载
 		if block.tenant_id != None and block.tenant_id != des_vm.tenant_id:
-			return ValueError("tenant id 不一致");
+			raise ValueError("tenant id 不一致");
 
 		#xml_name = $(block_uuid).xml。 build uxml文件， 如果返回失败，return ERROR
 		xml_name = block_uuid + '.xml'

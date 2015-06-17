@@ -90,6 +90,7 @@
 									<th>云主机</th>
 									<th>挂载点</th>
 									<th>block id</th>
+									<th>tenant id</th>
 									<th>操作</th>
 								</tr>
 							</thead>
@@ -107,6 +108,7 @@
 									{% endif %}
 									<td>{{ block.mountpoint }}</td>
 									<td>{{ block.uuid }}</td>
+									<td>{{ block.tenant_id }}</td>
 									<td>
 										<select class="action-select">
 											<option>选择操作</option>
