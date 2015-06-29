@@ -11,4 +11,6 @@ urlpatterns = patterns('',
 		url(r'^delete/$', views.delete, name="delete"),
 		url(r'^search/$', views.search, name="search"),
 		url(r'^import/$', views.import_block, name="import"),
+		url(r'^login/$', views.login, name="login"),
+		url(r'^logout/$', views.logout, name="logout"),
 		)

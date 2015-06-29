@@ -57,6 +57,12 @@
 				<div class="right-title">
 					<button id="new-btn" class="topo-btn new-btn">创建</button>
 					<button id="prop-btn" class="topo-btn prop-btn">导入</button>
+
+					<!--用户区-->
+					<div class="user-area">
+						<a href="#" title="admin"><span class="top-user">{{ username }}</span></a>
+						<a href="{% url 'blockmanager:logout' %}" title="登出"><span class="user-out">登出</span></a>
+					</div>
 				</div>
 				<!--按钮区域-->
 				
@@ -70,7 +76,7 @@
 						<div class="search-area">
 							<div>
 								<span>名称：<input type="text" name="name" value="" /></span>
-								<span>虚拟名称：<input type="text" name="vm_name" value="" /></span>
+								<span>虚机名称：<input type="text" name="vm_name" value="" /></span>
 								<span>格式：<select name="type"><option></option><option>qcow2</option></select></span>
 								<span><input type="submit" class="search_button" value="查询" /></span>
 							</div>				

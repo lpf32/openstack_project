@@ -24,7 +24,46 @@ from novaclient import client
 # Create your views here.
 
 
+def login(request):
+	try:
+		if request.method == 'GET':
+			return render(request,'blockmanager/login.html')
+		configs = get_config()
+		username = request.POST.get('username', None)
+		password = request.POST.get('password', None)
+		tenant_name = request.POST.get('tenant_name', None)
+
+		auth = v2.Password(auth_url=configs['auth_url'], username=username, 
+				password=password, tenant_name=tenant_name)
+		sess = session.Session(auth=auth)
+		nova = client.Client('2', session=sess)
+		nova.servers.list()
+
+		request.session['username'] = username
+		request.session['password'] = password
+		request.session['tenant_name'] = tenant_name
+		return HttpResponseRedirect(reverse('blockmanager:index'))
+	except Exception,e:
+		name = request.session.get('username', 'root')
+		logger = getLogger(name)
+		logger.error(e)
+		return HttpResponse(e)
+
+
+def logout(request):
+	try:
+		request.session['username'] = None
+		request.session['password'] = None
+		request.session['tenant_name'] = None
+		return HttpResponseRedirect(reverse('blockmanager:login'))
+	except Exception,e:
+		return HttpResponse(e)
+	
+
+
 def index(request):
+	if request.session.get('username', None) == None:
+		return HttpResponseRedirect(reverse('blockmanager:login'))
 	configs = get_config()
 	compute_group = configs['compute_group'].split(',')
 	blocks = Storage.objects.all()
@@ -38,7 +77,7 @@ def index(request):
 		contacts = paginator.page(paginator.num_pages)
 	
 	#return render(request, 'blockmanager/index.html', {'blocks': blocks})
-	return render_to_response('blockmanager/index.html', {'contacts': contacts, 'compute_group':compute_group}, context_instance=RequestContext(request))
+	return render_to_response('blockmanager/index.html', {'contacts': contacts, 'compute_group':compute_group, 'username': request.session.get('username', None)}, context_instance=RequestContext(request))
 
 
 @ajax
@@ -140,14 +179,14 @@ def create_block(request):
 
 		#log
 		name = ''
-		mesStr = 'create block ' + str(size) + 'G named ' + block_name
+		mesStr = request.session.get('username', 'root') + ' create block ' + str(size) + 'G named ' + block_name
 		logger = getLogger(name)
 		logger.info(mesStr)
 
 		#success
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 	except Exception, e:
-		name = ''
+		name = request.session.get('username', 'root')
 		logger = getLogger(name)
 		logger.error(e)
 		return HttpResponse(e)
@@ -207,14 +246,14 @@ def import_block(request):
 
 		#log
 		name = ''
-		mesStr = 'import block ' + d['virtual size'].split('(')[0] + ' named ' + block_name
+		mesStr = request.session.get('username', 'root') + ' import block ' + d['virtual size'].split('(')[0] + ' named ' + block_name
 		logger = getLogger(name)
 		logger.info(mesStr)
 
 		return HttpResponseRedirect(reverse('blockmanager:index'))
 
 	except Exception, e:
-		name = ''
+		name = request.session.get('username', 'root')
 		logger = getLogger(name)
 		logger.error(e)
 		return HttpResponse(e)
@@ -222,6 +261,8 @@ def import_block(request):
 
 def search(request):
 	try:
+		if request.session.get('username', None) == None:
+			return HttpResponseRedirect(reverse('blockmanager:login'))
 		#根据条件，查询结果，失败返回 ERROR
 		configs = get_config()
 		compute_group = configs['compute_group'].split(',')
@@ -256,7 +297,7 @@ def search(request):
 			contacts = paginator.page(paginator.num_pages)
 	
 	#return render(request, 'blockmanager/index.html', {'blocks': blocks})
-		return render_to_response('blockmanager/index.html', {'contacts': contacts, 'compute_group': compute_group}, context_instance=RequestContext(request))
+		return render_to_response('blockmanager/index.html', {'contacts': contacts, 'compute_group': compute_group, 'username': request.session.get('username', None)}, context_instance=RequestContext(request))
 	except Exception,e:
 		return HttpResponse(e)
 		
@@ -369,8 +410,8 @@ def mount(request):
 
 
 		#log
+		mesStr = request.session.get('username', 'root') + ' mount ' + block.uuid + ' at ' + mountpoint + ' on ' + vm.name
 		name = ''
-		mesStr = 'mount ' + block.uuid + ' at ' + mountpoint + ' on ' + vm.name
 		logger = getLogger(name)
 		logger.info(mesStr)
 
@@ -379,7 +420,7 @@ def mount(request):
 	except KeyError,e:
 		return HttpResponse('KeyError: ' + str(e))
 	except Exception,e:
-		name = ''
+		name = request.session.get('username', 'root')
 		logger = getLogger(name)
 		logger.error(e)
 		return HttpResponse(e)
@@ -411,7 +452,7 @@ def umount(request):
 
 		#log
 		name = ''
-		mesStr = 'unmount ' + str(block.uuid) + ' off ' + str(mountpoint) + ' on ' + str(vm.name)
+		mesStr = request.session.get('username', 'root') + ' unmount ' + str(block.uuid) + ' off ' + str(mountpoint) + ' on ' + str(vm.name)
 		logger = getLogger(name)
 		logger.info(mesStr)
 
@@ -420,7 +461,7 @@ def umount(request):
 	except KeyError,e:
 		return HttpResponse('KeyError: ' + str(e))
 	except Exception,e:
-		name = ''
+		name = request.session.get('username', 'root')
 		logger = getLogger(name)
 		logger.error(e)
 		return HttpResponse(e)
@@ -457,7 +498,7 @@ def delete(request):
 
 		#log
 		name = ''
-		mesStr = 'delete block ' + block.uuid + ' named ' + block.block_name
+		mesStr = request.session.get('username', 'root') + ' delete block ' + block.uuid + ' named ' + block.block_name
 		logger = getLogger(name)
 		logger.info(mesStr)
 
@@ -465,7 +506,7 @@ def delete(request):
 	except KeyError,e:
 		return HttpResponse('KeyError' + str(e))
 	except Exception,e:
-		name = ''
+		name = request.session.get('username', 'root')
 		logger = getLogger(name)
 		logger.error(e)
 		return HttpResponse(e)

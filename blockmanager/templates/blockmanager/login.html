@@ -1,0 +1,8 @@
+<html>
+	<form action="{% url 'blockmanager:login' %}" method="post"> {% csrf_token %}
+		username: <input name="username" type="text"/><p/>
+		password: <input name="password" type="text"/><p/>
+		tenant_name: <input name="tenant_name" type="text"/><p/>
+		<input type="submit">
+	</form>
+</html>

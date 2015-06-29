@@ -89,28 +89,6 @@ input[type="text"],textarea,select{
 	background:url("../img/right_title_bg.gif") repeat-x;
 }
 
-.user-area{
-	float:right;
-	margin-right:20px;
-}
-
-.top-user{
-	height:16px;
-	line-height:16px;
-	padding-left:17px;
-	display:inline-block;
-	background:url("../img/btn/user.png") no-repeat;
-}
-
-.user-out{
-	height:16px;
-	line-height:16px;
-	padding-left:17px;
-	margin-left:10px;
-	display:inline-block;
-	background:url("../img/btn/logout.png") no-repeat;
-}
-
 .topo-btn{
 	padding:3px 0px 2px 14px;
 	border: 0px none;

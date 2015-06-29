@@ -1,0 +1,5 @@
+<disk device="disk" type="file">
+  <dirver cache="none" name="qemu" type="raw"/>
+  <source file="/var/lib/nova/instances/block/be94f3ce1a1b11e598ee000c29d1c77f.qcow2"/>
+  <target bus="virtio" dev="vdb"/>
+</disk>
