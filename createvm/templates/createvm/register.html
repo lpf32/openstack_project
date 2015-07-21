@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>沪正软件</title>
+</head>
+	
+	<meta charset="utf-8" />
+	{% load staticfiles %}
+
+	<link rel="stylesheet" href="{% static 'createvm/css/register.css' %}" />
+
+<body onload="createCode()">
+	
+    <!--顶部-->
+	<div class="header-container">
+    
+		<div class="header">
+
+			<a class="logo" href="{createvm:login}"></a>
+
+			<span class="header-title">帐号注册</span>
+
+		</div>
+        
+	</div>
+    <!--顶部-->
+	
+    <!--内容-->
+	<div class="content-container">
+		
+		<div class="content">
+
+			<div class="regist-module" style="margin-bottom:100px; margin-top:5px">
+				
+                <!--注册信息-->
+				<div class="regist-wrap">
+					<form action="{% url 'createvm:register' %}" method="post">{% csrf_token %}
+						<table class="regist-table">
+							<tbody>
+								<tr>
+									<td class="fm-label">
+										<div class="fm-relative">
+											<span class="regist-icon regist-email"></span>
+											<label>
+												<span class="noempty">*</span>
+												用户名称：
+											</label>
+										</div>
+									</td>
+									<td class="fm-field" width="300">
+										
+										<input name="username" class="fm-text" value="" type="text" />
+
+									</td>
+								</tr>
+								<tr>
+									<td class="fm-label">
+										<label>
+											<span class="noempty">*</span>
+											登录密码：
+										</label>
+									</td>
+									<td class="fm-field">
+										<input name="password" class="fm-text" value="" type="password" />
+									</td>
+								</tr>
+								<tr>
+									<td class="fm-label">
+										<label>
+											<span class="noempty">*</span>
+											确认登录密码：
+										</label>
+									</td>
+									<td class="fm-field">
+										
+										<input name="check_password" class="fm-text" value="" type="password" />
+
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td>
+										<div class="fm-split">电子邮箱(电子邮箱为安全信息，不作登录使用)</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="fm-label">
+										<div class="fm-relative">
+											<span class="regist-icon regist-mobile"></span>
+											<label>
+												<span class="noempty">*</span>
+												电子邮箱：
+											</label>
+										</div>
+									</td>
+									<td class="fm-field">
+										<input name="email" class="fm-text" value="" type="text" />
+									</td>
+								</tr>
+								<tr>
+									<td class="fm-label">
+										<label>
+											<span class="noempty">*</span>
+											图片验证码：
+										</label>
+									</td>
+									<td class="fm-field">
+										
+										
+										<input name="code" class="fm-text" style="width:48px;" value=""  type="text" />
+										<input name="check_code" id="checkCode" type="text" onclick="createCode()" readonly="readonly" style="width: 80px" />
+										<a href="#" class="checkcode">看不清，换一张</a>
+
+									</td>
+								</tr>
+								<tr>
+									<td></td>
+									<td class="fm-field">	
+										<input value="同意并注册" class="fm-submit" type="submit" />
+										<a class="rt-btn" href="javascript:window.history.back();">返回登录</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</form>
+				</div>
+                <!--注册信息-->
+                
+				<!--注册说明-->
+                <div class="regist-extra">
+					<p>沪正虚拟服务器，公共开放的云计算服务平台！</p>
+					<p>产品稳定、数据可靠；</p>
+					<p>弹性伸缩、按需付费！</p>
+				</div>
+				<!--注册说明-->
+
+			</div>
+		
+		</div>
+
+	</div>
+    <!--内容-->
+    
+    <!--底部-->
+    <div class="footer-container">
+    	
+		<div class="footer">
+			<div class="footer-content">
+				<p>沪ICP备 12042907</p>
+			</div>
+		</div>
+
+    </div>
+    <!--底部-->
+
+	<script type="text/javascript" src="{% static 'createvm/js/code.js' %}"></script>	
+
+</body>
+</html>

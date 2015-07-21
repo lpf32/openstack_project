@@ -354,7 +354,7 @@ def mount(request):
 
 		#bulid xml 文件
 		root = etree.Element('disk', type='file', device='disk')
-		dirver = etree.Element('dirver', name='qemu', type='raw', cache='none')
+		dirver = etree.Element('dirver', name='qemu', type='qcow2', cache='none')
 		source = etree.Element('source', file=block.block_path)
 		target = etree.Element('target', dev=mountpoint, bus='virtio')
 		root.append(dirver)

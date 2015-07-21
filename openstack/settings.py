@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'blockmanager',
     'django_ajax',
+    'createvm'
 )
 
 MIDDLEWARE_CLASSES = (

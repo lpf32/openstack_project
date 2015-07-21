@@ -1,0 +1,108 @@
+@charset "utf-8";
+body{font-size: 12px;font-family: Arial,"宋体",Helvetica,sans-serif;}
+*{margin:0;padding:0; list-style: none;}
+a{text-decoration:none;color:#6e6e6e;}
+img{border:0px none;}
+:focus { outline: none; } /*针对Firfox去除虚线框*/
+a,area { blr:expression_r(this.onFocus=this.blur());} /*针对IE去除虚线框*/
+
+.login{
+	position:absolute;
+	top: 80px;
+	left: 50%;
+	margin: 0 0 0 -195px;
+	padding-top:120px;
+	width:390px;
+	border:1px solid #ddd;
+	max-height:none;
+	border-radius:6px;
+	box-shadow: 0px 3px 7px rgba(0,0,0,0.3);
+	background:url("../images/login/logo.png") center 35px no-repeat;
+}
+
+.modal-header{
+	padding:15px;
+	border-bottom:1px solid #e5e5e5;
+	min-height:16.42px;
+}
+
+.modal-header h3{
+	font-size:23px;
+	margin-top:18px;
+}
+
+.modal-body{
+	position:relative;
+	padding:15px;
+}
+
+.form-group{
+	margin-bottom:15px;
+}
+
+.control-label{
+	text-align:left;
+	color:#555;
+	font-weight:bold;
+	display:inline-block;
+	max-width:100%;
+	margin-bottom:5px;
+}
+
+.control-div input{
+	width:100%;
+	display:inline-block;
+	height:32px;
+	padding:2px 3px;
+	font-size:13px;
+	line-height:32px;
+	color:#555;
+	border:1px solid #ccc;
+	box-sizing:border-box;
+	border-radius:4px;
+}
+
+.code {
+	background:url("../images/login/code.png") no-repeat;
+	font-style: italic;
+	color: white !important;
+	border:0 !important;
+	border-radius:0 !important;
+	letter-spacing:3px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+.modal-footer{
+	padding:15px;
+	text-align:right;
+	border-top:1px solid #e5e5e5;
+}
+
+.enter-btn{
+	display:inline-block;
+	margin-bottom:0;
+	text-align:center;
+	vertical-align:middle;
+	color:white;
+	background-color:#3071a9;
+	border:1px solid #285e8e;
+	cursor:pointer;
+	padding:6px 12px;
+	font-size:13px;
+	border-radius:4px;
+}
+
+.reg-btn{
+	display:inline-block;
+	margin-bottom:0;
+	text-align:center;
+	vertical-align:middle;
+	color:white;
+	background-color:#ff6600;
+	border:1px solid #c65204;
+	cursor:pointer;
+	padding:6px 12px;
+	font-size:13px;
+	border-radius:4px;
+}

@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>沪正软件</title>
+</head>
+	
+	<meta charset="utf-8" />
+	<!--style-->
+	{% load staticfiles %}
+	<link rel="stylesheet" href="{% static 'createvm/css/black.css' %}" />
+	<!--style-->
+
+	<link rel="stylesheet" href="{% static 'createvm/css/product.css' %}" />
+	<link rel="stylesheet" href="{% static 'createvm/css/select/dropkick.css' %}" type="text/css">
+
+<body>
+	
+	<!--header-->
+	<div class="header">
+		
+		<!--topbar-->
+		<div class="top-bar">
+			<ul>
+				<li>欢迎：<a href="login.html">沪正登录</a></li>
+				<li>|</li>
+				<li><a href="register.html">注册</a></li>
+			</ul>
+		</div>
+		<!--topbar-->
+		
+		<!--topmenu-->
+		<div class="topmenu">
+			<a class="logo" href="{% url 'createvm:index' %}">
+				<img src="{% static 'createvm/images/header/logo.png' %}" />
+			</a>
+			<ul>
+				<li><a href="index.html">首页</a></li>
+				<li>
+					<a href="javascript:;">产品</a>
+					<ul class="drop-menu">
+						<li><a href="xnlogin.html">沪正虚拟服务器</a></li>
+					</ul>
+				</li>
+				<li><a href="hire.html">联系我们</a></li>
+				<li><a href="hire.html">加入我们</a></li>
+			</ul>
+		</div>
+		<!--topmenu-->
+
+	</div>
+	<!--header-->
+	
+	<!--content-->
+	<div class="content">
+		
+		<div class="content-container" style="width:1076px;">
+			
+			<!--右边部分-->
+			<!--右边部分-->
+
+			<!--左边部分-->
+			<div class="main" style="min-height:492px;">
+				
+				<div class="page-tab">
+					<ul>
+						<li class="current">
+							<a href="javascript:;">沪正虚拟服务器</a>
+						</li>
+					</ul>
+				</div>
+
+				<div class="page-buy">
+					
+					<form action="{% url 'createvm:create'%}" method="post">{% csrf_token %}
+						<div class="form" style="padding: 10px 0px 0px;">
+							<div class="row">
+								<label class="row-name">虚机名称：</label>
+									<div class="column">																													<input class="hz-input" name='vm_name' style="width:195px;text-align:left;" type="text" value="" />
+									</div>																														</div>
+								<div class="row">
+									<label class="row-name">CPU：</label>
+									<div class="column">
+
+										<span class="hz-radio hz-cpu">
+											<a class="unit current" tocpu="1" showm="m1">1核</a>
+											<a class="unit" tocpu="2" showm="m2">2核</a>
+											<a class="unit" tocpu="4" showm="m3">4核</a>
+											<a class="unit" tocpu="8" showm="m4">8核</a>
+											<a class="unit" tocpu="16" showm="m5">16核</a>
+										</span>
+
+										<input id="hz-cpu" name='vcpus' type="hidden" value="1" />
+
+									</div>
+								</div>
+	
+								<div class="row">
+									<label class="row-name">内存：</label>
+									<div class="column">
+
+										<span id="m1" class="hz-radio hz-memory" style="display:inline-block;">
+											<a class="unit current" tomemory="512M">512MB</a>
+											<a class="unit" tomemory="1G">1GB</a>
+											<a class="unit" tomemory="2G">2GB</a>
+											<a class="unit" tomemory="5G">4GB</a>
+											<a class="unit" tomemory="8G">8GB</a>
+										</span>
+
+										<span id="m2" class="hz-radio hz-memory">
+											<a class="unit current" tomemory="2G">2GB</a>
+											<a class="unit" tomemory="4G">4GB</a>
+											<a class="unit" tomemory="8G">8GB</a>
+											<a class="unit" tomemory="16G">16GB</a>
+										</span>
+
+										<span id="m3" class="hz-radio hz-memory">
+											<a class="unit current" tomemory="4">4GB</a>
+											<a class="unit" tomemory="8G">8GB</a>
+											<a class="unit" tomemory="16G">16GB</a>
+											<a class="unit" tomemory="32G">32GB</a>
+										</span>
+
+										<span id="m4" class="hz-radio hz-memory">
+											<a class="unit current" tomemory="8">8GB</a>
+											<a class="unit" tomemory="16G">16GB</a>
+											<a class="unit" tomemory="32G">32GB</a>
+											<a class="unit" tomemory="64G">64GB</a>
+										</span>
+
+										<span id="m5" class="hz-radio hz-memory">
+											<a class="unit current" tomemory="16">16GB</a>
+											<a class="unit" tomemory="32G">32GB</a>
+											<a class="unit" tomemory="64G">64GB</a>
+										</span>
+
+										<input id="hz-memory" name='ram' type="hidden" value="512M" />
+
+										<div class="tip-row">
+											<span>为了保证良好的性能体验，推荐使用双核4G</span>
+										</div>
+
+									</div>
+								</div>
+	
+								<div class="row">
+									<label class="row-name">镜像：</label>
+									<div class="column" style="line-height:22px;">
+
+										<select id="sys-change" name="os" class="change">
+											<option toversion="v0">选择操作系统</option>
+											{% for img in images%}
+											<option value="{{ img.name }}" toversion="v1">{{ img.name }}</option>
+											{% endfor %}
+										</select>
+
+								</div>
+	
+								<!--<div class="row">
+									<label class="row-name">购买时间：</label>
+									<div id="column1" class="column">
+										<span class="hz-slider">
+											<div id="range1" class="range">
+												<span class="block mm">
+													<div>
+														<span>1</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>2</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>3</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>4</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>5</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>6</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>7</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>8</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>9</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>10</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>11</span>
+													</div>
+												</span>
+												<span class="block mm">
+													<div>
+														<span>12 月</span>
+													</div>
+												</span>
+												<span class="block yy">
+													<div>
+														<span>2年</span>
+													</div>
+												</span>
+												<span class="block yy">
+													<div style="border:0;padding:0;">
+														<span>3年</span>
+													</div>
+												</span>
+												
+												<div class="container" style="width:37px;">
+													<div class="current">
+														<span class="block mm">
+															<div>
+																<span>1</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>2</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>3</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>4</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>5</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>6</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>7</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>8</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>9</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>10</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>11</span>
+															</div>
+														</span>
+														<span class="block mm">
+															<div>
+																<span>12</span>
+															</div>
+														</span>
+														<span class="block yy">
+															<div style="border:0;padding:0;">
+																<span>3年</span>
+															</div>
+														</span>
+													</div>
+												</div>
+												<a id="drag1" class="drag" style="left:30px;" href="javascript:;"></a>
+											</div>
+										</span>
+									</div>
+								</div>-->
+	
+								<div class="row" style="overflow:hidden;">
+									<label class="row-name">购买数量：</label>
+									<div class="column">
+										<input class="hz-input" name='number' type="text" value="1" />
+										台
+									</div>
+								</div>
+	
+								<div class="button-row">
+									<button class="add-order">创建</button>
+								</div>
+	
+								<div class="hz-submit"></div>
+	
+						</div>
+					</form>
+                    
+				</div>
+
+			</div>
+			<!--左边部分-->
+		
+		</div>
+
+	</div>
+	<!--content-->
+	
+	<!--footer-->
+	<div class="footer">
+		沪ICP备 12042907
+	</div>
+	<!--footer-->
+
+	<script type="text/javascript" src="{% static 'createvm/js/jquery-1.11.1.js' %}"></script>
+
+	<script type="text/javascript" src="{% static 'createvm/js/jquery-ui-1.10.4.custom.js' %}"></script>
+
+	<script type="text/javascript" src="{% static 'createvm/js/index.js' %}"></script>
+
+	<script type="text/javascript" src="{% static 'createvm/js/select/jquery.dropkick.js' %}"></script>
+
+	<script>
+	
+		$(function(){
+			
+			$('.change').dropkick();
+
+			$( "#drag1" ).draggable({ 
+				containment: "#range1",
+				axis: "x",
+				drag: function(event,ui){
+					var temp = $(this).css("left");
+					$(this).prev(".container").css("width",temp);
+				},
+				stop:function(event,ui){
+					var finalleft = parseInt($(this).css("left"));
+				}
+			
+			});
+
+			$( "#drag2" ).draggable({ 
+				containment: "#range2",
+				axis: "x",
+				drag: function(event,ui){
+					var temp = $(this).css("left");
+					$(this).prev(".container").css("width",temp);
+
+					var finalleft = parseInt($(this).css("left"));
+					var inputM = parseInt(finalleft*100/482);
+					$("#Minput").val(inputM);
+
+				}
+			
+			});
+
+		});
+
+	</script>
+
+</body>
+</html>

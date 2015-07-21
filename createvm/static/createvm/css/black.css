@@ -1,0 +1,46 @@
+body{color:black;}
+a{text-decoration:none;color:#ccc;}
+a:hover{text-decoration:none;color:#ccc;}
+
+/*header*/
+.header{background:#161925;}
+.top-bar ul li{color:#ccc;}
+.top-bar ul li a:hover{color:white;}
+.topmenu{background:url("../images/header/h-bg-black.png") repeat-x;}
+.topmenu h1{float:left;line-height:50px;margin-left:70px;color:white;}
+.topmenu ul li a:hover{color:white;}
+.topmenu ul li:hover{background:url("../images/header/menu-hover-black.png") repeat-x;}
+
+.drop-menu{background-color: white;border: 1px solid #ccc;}
+.drop-menu a{color: #333;}
+/*header*/
+
+/*index*/
+.list-row{
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#474a50), to(#0f161a));
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#474a50,endColorstr=#0f161a);
+	background: -moz-linear-gradient(top, #474a50, #0f161a); 
+}
+
+.list-row-content dl dd{
+	background:url("../images/index/list-row-black.png") left center no-repeat;
+	background-position:0 0;
+	color:#a8a8a8;
+}
+
+.list-row-content dl dt a{
+	color:#fcb712;
+}
+
+.list-row-content dl dd:hover{
+	background-position:0 -120px;
+}
+
+.list-row-content dl dd a{
+	color:#a8a8a8;
+}
+
+.list-row-content dl dd a:hover{
+	color:white;
+}
+/*index*/

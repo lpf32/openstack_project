@@ -1,0 +1,7 @@
+#index_pic{background:url("../images/focus/loadsmall.gif") no-repeat center;overflow:hidden;width:100%;border-bottom:1px solid #ddd;position:relative;height:250px;overflow:hidden;margin:0 auto;}
+#index_pic ul{z-index:999;right:3px;bottom:0px;position:absolute;text-align:left}
+#index_pic ul li{display:block;font-weight:900;font-size:12px;float:left;width:70px;color:#aaa;position:relative;height:50px;}
+#index_pic li div{margin-top:5px;display:none;padding-left:10px;margin-left:70px}
+#index_pic li img{border-right:#fff 1px solid;border-top:#fff 1px solid;filter:alpha(opacity=60);left:10px;float:left;border-left:#fff 1px solid;width:52px;cursor:pointer;margin-right:4px;border-bottom:#fff 1px solid;position:absolute;top:5px;height:35px;moz-opacity:0.6}
+#back{width:100%;height:400px;overflow:hidden;}
+/*#back .gray{filter:Gray();}*/

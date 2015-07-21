@@ -10,5 +10,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^blockmanager/', include('blockmanager.urls', namespace='blockmanager')),
-    url(r'^', include('blockmanager.urls', namespace='blockmanager')),
+    url(r'^createvm/', include('createvm.urls', namespace='createvm')),
 )

@@ -1,0 +1,377 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>沪正软件</title>
+</head>
+	
+	<meta charset="utf-8" />
+	<!--style-->
+	{% load staticfiles %}
+	<link rel="stylesheet" href="{% static 'createvm/css/black.css' %}" />
+	<!--style-->
+
+	<link rel="stylesheet" href="{% static 'createvm/css/product.css' %}" />
+	<link rel="stylesheet" href="{% static 'createvm/css/select/dropkick.css' %}" type="text/css">
+
+<body>
+	
+	<!--header-->
+	<div class="header">
+		
+		<!--topbar-->
+		<div class="top-bar">
+			<ul>
+				<li>欢迎：<a href="{% url 'createvm:logout' %}">usertest</a></li>
+				<li>|</li>
+				<li><a href="#">登出</a></li>
+			</ul>
+		</div>
+		<!--topbar-->
+		
+		<!--topmenu-->
+		<div class="topmenu">
+			<a class="logo" href="{% url 'createvm:index' %}">
+				<img src="{% static 'createvm/images/header/logo.png' %}" />
+			</a>
+			<h1>虚机管理系统</h1>
+		</div>
+		<!--topmenu-->
+
+	</div>
+	<!--header-->
+	
+	<!--content-->
+	<div class="content">
+
+		<div class="content-container" style="margin-top:10px;">
+			
+			<div>
+				<a class="edit-btn" href="{% url 'createvm:create' %}">新建应用</a>
+			</div>
+
+            <!--我的应用1-->
+            <div class="page-buy page-list">
+            	
+                <div class="page-title">
+                	<h3>我的应用1</h3>
+					<span>共享带宽：100M</span>
+					<span>共享IP数：10 个</span>
+					<a class="edit-btn" style="float:right;" href="xn.html">编辑</a>
+                </div>
+
+                <table class="myxntable" style="margin-top:15px;">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>CPU</th>
+                            <th>内存</th>
+                            <th>操作系统</th>
+                            <th>购买时间</th>
+                            <th>购买数量</th>
+                            <th>开始日期</th>
+                            <th>结束日期</th>
+							<th>运行状态</th>
+							<th>状态</th>
+							<th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>4核</td>
+                            <td>8G</td>
+                            <td>Windows/已激活</td>
+                            <td>1 年</td>
+                            <td>1 台</td>
+                            <td>2014-08-04 16:44:35</td>
+                            <td>2015-08-04 16:44:35</td>
+							<td>正常</td>
+							<td>免费试用</td>
+							<td><a class="edit-btn" href="#">信息</a></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>4核</td>
+                            <td>8G</td>
+                            <td>Windows/已激活</td>
+                            <td>1 年</td>
+                            <td>1 台</td>
+                            <td>2014-08-04 16:44:35</td>
+                            <td>2015-08-04 16:44:35</td>
+							<td>挂起</td>
+							<td>免费试用</td>
+							<td><a class="edit-btn" href="#">信息</a></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>4核</td>
+                            <td>8G</td>
+                            <td>Windows/已激活</td>
+                            <td>1 年</td>
+                            <td>1 台</td>
+                            <td>2014-08-04 16:44:35</td>
+                            <td>2015-08-04 16:44:35</td>
+							<td>正常</td>
+							<td>免费试用</td>
+							<td><a class="edit-btn" href="#">信息</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+           	
+            </div>
+            <!--我的应用1-->
+			
+            <!--我的应用2-->
+			<div class="page-buy page-list">
+				
+				<div class="page-title">
+                	<h3>我的应用2</h3>
+					<span>共享带宽：100M</span>
+					<span>共享IP数：10 个</span>
+					<a class="edit-btn" style="float:right;" href="xn.html">编辑</a>
+                </div>
+
+				<table class="myxntable" style="margin-top:15px;">
+				<thead>
+					<tr>
+						<th>编号</th>
+						<th>CPU</th>
+						<th>内存</th>
+						<th>操作系统</th>
+						<th>购买时间</th>
+						<th>购买数量</th>
+						<th>开始日期</th>
+						<th>结束日期</th>
+						<th>运行状态</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>4核</td>
+						<td>8G</td>
+						<td>Windows/已激活</td>
+						<td>1 年</td>
+						<td>1 台</td>
+						<td>2014-08-04 16:44:35</td>
+						<td>2015-08-04 16:44:35</td>
+						<td>正常</td>
+						<td>待审核</td>
+						<td><a class="edit-btn" href="#">信息</a></td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>4核</td>
+						<td>8G</td>
+						<td>Windows/已激活</td>
+						<td>1 年</td>
+						<td>1 台</td>
+						<td>2014-08-04 16:44:35</td>
+						<td>2015-08-04 16:44:35</td>
+						<td>正常</td>
+						<td>待审核</td>
+						<td><a class="edit-btn" href="#">信息</a></td>
+					</tr>
+				</tbody>
+			</table>
+            
+            </div>
+            <!--我的应用2-->
+			
+            <!--我的应用3-->
+			<div class="page-buy  page-list">
+				
+				<div class="page-title">
+                	<h3>我的应用3</h3>
+					<span>共享带宽：100M</span>
+					<span>共享IP数：10 个</span>
+					<a class="edit-btn" style="float:right;" href="xn.html">查看</a>
+                </div>
+
+				<table class="myxntable" style="margin-top:15px;">
+				<thead>
+					<tr>
+						<th>编号</th>
+						<th>CPU</th>
+						<th>内存</th>
+						<th>操作系统</th>
+						<th>购买时间</th>
+						<th>购买数量</th>
+						<th>开始日期</th>
+						<th>结束日期</th>
+						<th>运行状态</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>4核</td>
+						<td>8G</td>
+						<td>Windows/已激活</td>
+						<td>1 年</td>
+						<td>1 台</td>
+						<td>2014-08-04 16:44:35</td>
+						<td>2015-08-04 16:44:35</td>
+						<td>正常</td>
+						<td>正式付费</td>
+						<td><a class="edit-btn" href="#">信息</a></td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>4核</td>
+						<td>8G</td>
+						<td>Windows/已激活</td>
+						<td>1 年</td>
+						<td>1 台</td>
+						<td>2014-08-04 16:44:35</td>
+						<td>2015-08-04 16:44:35</td>
+						<td>正常</td>
+						<td>正式付费</td>
+						<td><a class="edit-btn" href="#">信息</a></td>
+					</tr>
+				</tbody>
+			</table>
+            
+            </div>
+            <!--我的应用3-->
+
+			 <!--我的应用4-->
+			<div class="page-buy page-list">
+				
+				<div class="page-title">
+                	<h3>我的应用4</h3>
+					<span>共享带宽：100M</span>
+					<span>共享IP数：10 个</span>
+					<a class="edit-btn" style="float:right;" href="xn.html">查看</a>
+                </div>
+
+				<table class="myxntable" style="margin-top:15px;">
+				<thead>
+					<tr>
+						<th>编号</th>
+						<th>CPU</th>
+						<th>内存</th>
+						<th>操作系统</th>
+						<th>购买时间</th>
+						<th>购买数量</th>
+						<th>开始日期</th>
+						<th>结束日期</th>
+						<th>运行状态</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>4核</td>
+						<td>8G</td>
+						<td>Windows/已激活</td>
+						<td>1 年</td>
+						<td>1 台</td>
+						<td>2013-08-04 16:44:35</td>
+						<td>2014-08-04 16:44:35</td>
+						<td>停止</td>
+						<td>已到期</td>
+						<td>
+							<a class="edit-btn" href="#">信息</a>
+							<a class="edit-btn" href="xn.html">续费</a>
+							<a class="edit-btn" style="margin-top:3px;" href="#">删除</a>
+						</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>4核</td>
+						<td>8G</td>
+						<td>Windows/已激活</td>
+						<td>1 年</td>
+						<td>1 台</td>
+						<td>2014-08-04 16:44:35</td>
+						<td>2015-08-04 16:44:35</td>
+						<td>停止</td>
+						<td>已到期</td>
+						<td>
+							<a class="edit-btn" href="#">信息</a>
+							<a class="edit-btn" href="xn.html">续费</a>
+							<a class="edit-btn" style="margin-top:3px;" href="#">删除</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+            
+            </div>
+            <!--我的应用4-->
+		
+		</div>
+
+	</div>
+	<!--content-->
+	
+	<!--footer-->
+	<div class="footer">
+		沪ICP备 12042907
+	</div>
+	<!--footer-->
+
+	<script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+
+	<script type="text/javascript" src="js/jquery-ui-1.10.4.custom.js"></script>
+
+	<script type="text/javascript" src="js/index.js"></script>
+
+	<script type="text/javascript" src="js/select/jquery.dropkick.js"></script>
+
+	<script>
+	
+		$(function(){
+			
+			$('.change').dropkick();
+
+			$( "#drag1" ).draggable({ 
+				containment: "#range1",
+				axis: "x",
+				drag: function(event,ui){
+					var temp = $(this).css("left");
+					$(this).prev(".container").css("width",temp);
+				},
+				stop:function(event,ui){
+					var finalleft = parseInt($(this).css("left"));
+				}
+			
+			});
+
+			$( "#drag2" ).draggable({ 
+				containment: "#range2",
+				axis: "x",
+				drag: function(event,ui){
+					var temp = $(this).css("left");
+					$(this).prev(".container").css("width",temp);
+
+					var finalleft = parseInt($(this).css("left"));
+					var inputM = parseInt(finalleft*100/522);
+					$("#Minput").val(inputM);
+
+				}
+			
+			});
+
+			$(".unit").click(function(){
+				
+				$(this).addClass("current");
+				$(this).siblings(".unit").removeClass("current");
+
+
+			});
+
+			$(".myxntable tbody tr:even").css("background-color", "#f9f9f9");
+
+		});
+
+	</script>
+
+</body>
+</html>
