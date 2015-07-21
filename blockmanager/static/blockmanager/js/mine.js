@@ -160,7 +160,32 @@ $(function(){
 					//history.go(0)
 				}
 			});
+		}
 
+		else if(i == 4) //disable
+		{
+			var listid_4 = $(this).next(".list-id").val();
+			var csrftoken = getCookie('csrftoken');
+
+			$.ajax({
+				type: "POST",
+				url: "/blockmanager/disable/",
+				data: {block_id:listid_4},
+				cache:false,
+				beforeSend:function(xhr, settings){
+					 xhr.setRequestHeader("X-CSRFToken", csrftoken);
+					if(!confirm("确认要disable？"))
+					{
+						return false;
+					}
+				},
+				success: function(data){
+					//$("#eq-area").html(data);
+					alert(data)
+					window.location.reload(true)
+					//history.go(0)
+				}
+			});
 		}
 	});
 

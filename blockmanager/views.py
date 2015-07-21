@@ -467,6 +467,36 @@ def umount(request):
 		return HttpResponse(e)
 
 
+def disable(request):
+	try:
+		#根据条件，查询结果，失败返回 ERROR
+		block_id = request.POST.get('block_id')
+		#取得block，vm 实例
+		block = get_object_or_404(Storage, pk=block_id)
+		vm = VM.objects.get(storage__id=block.id)
+
+		#update 数据库
+		block.mounted_at = None
+		block.is_mounted = False
+		block.save()
+
+		#log
+		name = ''
+		mesStr = request.session.get('username', 'root') + ' disable ' + str(block.uuid) + ' off ' + ' on ' + str(vm.name)
+		logger = getLogger(name)
+		logger.info(mesStr)
+
+		return HttpResponse('success')
+
+	except KeyError,e:
+		return HttpResponse('KeyError: ' + str(e))
+	except Exception,e:
+		name = request.session.get('username', 'root')
+		logger = getLogger(name)
+		logger.error(e)
+		return HttpResponse(e)
+
+
 def delete(request):
 	try:
 		#根据条件，查询结果，失败返回 ERROR
