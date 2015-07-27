@@ -30,6 +30,8 @@ from keystoneclient.v2_0 import client as keystoneClient
 
 def login(request):
 	try:
+		if request.session.get('username', None) != None:
+			return HttpResponseRedirect(reverse('createvm:index'))
 		if request.method == 'GET':
 			return render(request,'createvm/login.html')
 		#判断验证码
@@ -67,6 +69,8 @@ def login(request):
 
 def register(request):
 	try:
+		if request.session.get('username', None) != None:
+			return HttpResponseRedirect(reverse('createvm:index'))
 		if request.method == 'GET':
 			return render(request, 'createvm/register.html')
 		
