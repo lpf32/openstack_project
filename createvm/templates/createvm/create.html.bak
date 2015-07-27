@@ -15,18 +15,15 @@
 
 <body>
 	
-	<div id="loading-div">
-	</div>
-	
 	<!--header-->
 	<div class="header">
 		
 		<!--topbar-->
 		<div class="top-bar">
 			<ul>
-				<li>欢迎：{{ username }}</a></li>
+				<li>欢迎：<a href="login.html">沪正登录</a></li>
 				<li>|</li>
-				<li><a href="{% url 'createvm:logout' %}">登出</a></li>
+				<li><a href="register.html">注册</a></li>
 			</ul>
 		</div>
 		<!--topbar-->
@@ -37,7 +34,7 @@
 				<img src="{% static 'createvm/images/header/logo.png' %}" />
 			</a>
 			<ul>
-				<li><a href="{% url 'createvm:index' %}">首页</a></li>
+				<li><a href="index.html">首页</a></li>
 				<li>
 					<a href="javascript:;">产品</a>
 					<ul class="drop-menu">
@@ -76,14 +73,10 @@
 					
 					<form action="{% url 'createvm:create'%}" method="post">{% csrf_token %}
 						<div class="form" style="padding: 10px 0px 0px;">
-								
-								<div class="row">
-									<label class="row-name">虚机名称：</label>
-									<div class="column">
-										<input class="hz-input" name="vm_name" style="width:195px;text-align:left;" type="text" value="" />
-									</div>
-								</div>
-								
+							<div class="row">
+								<label class="row-name">虚机名称：</label>
+									<div class="column">																													<input class="hz-input" name='vm_name' style="width:195px;text-align:left;" type="text" value="" />
+									</div>																														</div>
 								<div class="row">
 									<label class="row-name">CPU：</label>
 									<div class="column">
@@ -96,7 +89,7 @@
 											<a class="unit" tocpu="16" showm="m5">16核</a>
 										</span>
 
-										<input id="hz-cpu" name="vcpus" type="hidden" value="1" />
+										<input id="hz-cpu" name='vcpus' type="hidden" value="1" />
 
 									</div>
 								</div>
@@ -109,7 +102,7 @@
 											<a class="unit current" tomemory="512M">512MB</a>
 											<a class="unit" tomemory="1G">1GB</a>
 											<a class="unit" tomemory="2G">2GB</a>
-											<a class="unit" tomemory="4G">4GB</a>
+											<a class="unit" tomemory="5G">4GB</a>
 											<a class="unit" tomemory="8G">8GB</a>
 										</span>
 
@@ -140,7 +133,7 @@
 											<a class="unit" tomemory="64G">64GB</a>
 										</span>
 
-										<input id="hz-memory" name="ram" type="hidden" value="512M" />
+										<input id="hz-memory" name='ram' type="hidden" value="512M" />
 
 										<div class="tip-row">
 											<span>为了保证良好的性能体验，推荐使用双核4G</span>
@@ -154,7 +147,7 @@
 									<div class="column" style="line-height:22px;">
 
 										<select id="sys-change" name="os" class="change">
-											<option toversion="v0">选择操作系统类别</option>
+											<option toversion="v0">选择操作系统</option>
 											{% for img in images%}
 											<option value="{{ img.name }}" toversion="v1">{{ img.name }}</option>
 											{% endfor %}
@@ -316,7 +309,7 @@
 								<div class="row" style="overflow:hidden;">
 									<label class="row-name">购买数量：</label>
 									<div class="column">
-										<input class="hz-input" name="number" type="text" value="1" />
+										<input class="hz-input" name='number' type="text" value="1" />
 										台
 									</div>
 								</div>
@@ -345,14 +338,6 @@
 		沪ICP备 12042907
 	</div>
 	<!--footer-->
-	
-	<!--loading图标-->
-	<div id="loading-div"></div>
-	<!--loading图标-->
-
-	<!--遮罩层-->
-	<div id="zhezhao"></div>
-	<!--遮罩层-->
 
 	<script type="text/javascript" src="{% static 'createvm/js/jquery-1.11.1.js' %}"></script>
 
@@ -361,10 +346,6 @@
 	<script type="text/javascript" src="{% static 'createvm/js/index.js' %}"></script>
 
 	<script type="text/javascript" src="{% static 'createvm/js/select/jquery.dropkick.js' %}"></script>
-	
-	<!--loading-->
-	<script type="text/javascript" src="{% static 'createvm/js/loading/jquery.shCircleLoader.js' %}"></script>
-	<!--loading-->
 
 	<script>
 	
@@ -399,19 +380,6 @@
 				}
 			
 			});
-			
-			/*loading js*/
-			$(".add-order").click(function(){
-
-				$('#zhezhao').show();
-				$('#loading-div').show();
-				$('#loading-div').shCircleLoader({namespace:"myns",color:"transparent",dotsRadius:15});
-
-				setTimeout("window.location='createvm/index'",10000);
-
-			});
-			/*loading js*/
-			
 
 		});
 

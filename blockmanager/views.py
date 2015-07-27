@@ -352,6 +352,7 @@ def mount(request):
 		if len(mounted_blocks) != 0 and mounted_blocks[len(mounted_blocks) - 1].mountpoint >= mountpoint:
 			mountpoint = 'vd' + string.ascii_lowercase[string.ascii_lowercase.index(mounted_blocks[len(mounted_blocks) - 1].mountpoint[-1]) + 1]
 
+
 		#bulid xml 文件
 		root = etree.Element('disk', type='file', device='disk')
 		dirver = etree.Element('dirver', name='qemu', type='qcow2', cache='none')
