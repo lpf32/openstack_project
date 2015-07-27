@@ -164,7 +164,7 @@ def create(request):
 		nova = client.Client('2', session=sess)
 		if request.method == 'GET':
 			images = nova.images.list()
-			return render(request,'createvm/create.html', {'images': images})
+			return render(request,'createvm/create.html', {'images': images, 'username':username})
 
 		if request.method == 'POST':
 			ram = request.POST.get('ram')

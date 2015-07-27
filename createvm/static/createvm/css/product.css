@@ -485,3 +485,30 @@ a.edit-btn{
 .active-change{
 	display:block;
 }
+
+#loading-div{
+	display:none;
+	position:absolute;
+	width:100px;
+	height:100px;
+	left:45%;
+	top:250px;
+	z-index:20000;
+}
+
+#zhezhao{
+	display:none;
+	position:absolute;
+	width:100%;
+	height:100%;
+	left:0;
+	top:0;
+	background-color:black;
+	filter:alpha(opacity=10);
+	opacity:0.1;
+	z-index:19999;
+}
+
+.myns > div {
+    box-shadow: 0 0 6px black, inset 0 0 6px black;
+}
