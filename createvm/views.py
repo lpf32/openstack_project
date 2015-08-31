@@ -214,6 +214,14 @@ def create(request):
 			image = nova.images.find(name=os)
 			#nics = [{'net-id': nova.networks.list()[0].id}]
 
+			#得到一个合适的网络
+			no = int(random.random()*len(Network.objects.filter(is_used=False)))
+			net = Network.objects.filter(is_used=False)[no]
+			ip = net.ip
+			netmask = net.netmask
+			vlan_id = net.vlan_id
+
+
 			#创建网络
 			m = Member.objects.get(name=username)
 			net_name = username + "_net"
@@ -222,7 +230,7 @@ def create(request):
 			python_os.environ['OS_AUTH_URL'] = auth_url;
 			python_os.environ['OS_TENANT_NAME'] = tenant_name;
 			if m.is_active == False:
-				cmd = './createvm/cn.sh ' + net_name
+				cmd = './createvm/cn.sh ' + net_name + ' ' + ip + ' ' + netmask + ' ' + vlan_id
 				n = python_os.system(cmd)
 				if (n >> 8) != 0:
 					raise ValueError("网络创建失败")

@@ -19,4 +19,6 @@ class Network(models.Model):
 	member = models.ForeignKey(Member, null=True)
 	name = models.CharField(max_length=200)
 	ip = models.CharField(max_length=200)
+	netmask = models.CharField(max_length=200)
+	vlan_id = models.CharField(max_length=200)
 	is_used = models.BooleanField(False)
