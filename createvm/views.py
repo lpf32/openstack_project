@@ -236,6 +236,10 @@ def create(request):
 					raise ValueError("网络创建失败")
 				m.is_active = True
 				m.save()
+				net.member_id = m.id
+				net.name = net_name
+				net.is_used = True
+				net.save()
 
 			#得到目标网络
 			desNet = None
