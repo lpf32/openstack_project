@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from blockmanager.views import get_config
+from createvm.models import Member, Vm, Network
 
 import string
 import ansible.runner
@@ -18,6 +19,7 @@ from lxml import etree
 import random
 import logging
 import logging.config
+import os as python_os
 
 from keystoneclient.auth.identity import v2
 from keystoneclient import session
@@ -102,6 +104,19 @@ def register(request):
 			my_tenant = [x for x in tenants if x.name==username][0]
 			my_user = keystone.users.create(name=username,
 							password=password, tenant_id=my_tenant.id, email=email)
+
+			#用户添加amdin 角色
+			admin_role = None
+			for r in keystone.roles.list():
+				if r.name == "admin":
+					admin_role = r
+
+			keystone.roles.add_user_role(my_user, admin_role, my_tenant)
+
+			mem = Member()
+			mem.name = username
+			mem.is_active = False
+			mem.save()
 
 			return HttpResponseRedirect(reverse('createvm:login'))
 
@@ -197,7 +212,33 @@ def create(request):
 
 			flavor = nova.flavors.find(vcpus=vcpus, ram=ram)
 			image = nova.images.find(name=os)
-			nics = [{'net-id': nova.networks.list()[0].id}]
+			#nics = [{'net-id': nova.networks.list()[0].id}]
+
+			#创建网络
+			m = Member.objects.get(name=username)
+			net_name = username + "_net"
+			python_os.environ['OS_USERNAME'] = username;
+			python_os.environ['OS_PASSWORD'] = password;
+			python_os.environ['OS_AUTH_URL'] = auth_url;
+			python_os.environ['OS_TENANT_NAME'] = tenant_name;
+			if m.is_active == False:
+				cmd = './createvm/cn.sh ' + net_name
+				n = python_os.system(cmd)
+				if (n >> 8) != 0:
+					raise ValueError("网络创建失败")
+				m.is_active = True
+				m.save()
+
+			#得到目标网络
+			desNet = None
+			for net in nova.networks.list():
+				if net.human_id == net_name:
+					desNet = net
+
+			if desNet == None:
+				raise ValueError("没有找到网络")
+			nics = [{'net-id': desNet.id}]
+
 			for i in range(number):
 				nova.servers.create(vm_name, flavor=flavor.id, image=image.id, nics=nics)
 			return HttpResponseRedirect(reverse('createvm:index'))
