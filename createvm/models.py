@@ -21,4 +21,6 @@ class Network(models.Model):
 	ip = models.CharField(max_length=200)
 	netmask = models.CharField(max_length=200)
 	vlan_id = models.CharField(max_length=200)
+	start = models.CharField(max_length=200)
+	end = models.CharField(max_length=200)
 	is_used = models.BooleanField(False)
