@@ -220,6 +220,8 @@ def create(request):
 			ip = net.ip
 			netmask = net.netmask
 			vlan_id = net.vlan_id
+			start = net.start
+			end = net.end
 
 
 			#创建网络
@@ -230,7 +232,7 @@ def create(request):
 			python_os.environ['OS_AUTH_URL'] = auth_url;
 			python_os.environ['OS_TENANT_NAME'] = tenant_name;
 			if m.is_active == False:
-				cmd = './createvm/cn.sh ' + net_name + ' ' + ip + ' ' + netmask + ' ' + vlan_id
+				cmd = './createvm/cn.sh ' + net_name + ' ' + ip + ' ' + netmask + ' ' + vlan_id + ' ' + start + ' ' + end
 				n = python_os.system(cmd)
 				if (n >> 8) != 0:
 					raise ValueError("网络创建失败")
